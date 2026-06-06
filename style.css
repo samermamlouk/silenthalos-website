@@ -133,3 +133,9 @@ label { display:block; margin: 16px 0; color: var(--silver-smoke); }
 @media (max-width: 900px) {
   .hero, .cards, .steps { grid-template-columns: 1fr; }
 }
+.brand-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    object-fit: contain;
+}
