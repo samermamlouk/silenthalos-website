@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SilentHalos App Prototype</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="prototype-body">
+  <header class="nav">
+    <div class="brand"><div class="logo">Sh</div><span>SilentHalos Prototype</span></div>
+    <a href="index.html" class="nav-btn">Landing Page</a>
+  </header>
+
+  <section class="prototype-wrap">
+    <div class="screen">
+      <div class="screen-head"><div class="mini-logo">Sh</div><span>Home</span></div>
+      <button class="sos">SOS</button>
+      <p class="hint">Shake phone 3 times or press SOS</p>
+      <div class="menu">
+        <a href="#safe-circle">Safe Circle</a>
+        <a href="#drive">Drive Mode</a>
+        <a href="#history">History</a>
+        <a href="#settings">Settings</a>
+      </div>
+    </div>
+
+    <div id="safe-circle" class="screen">
+      <div class="screen-head"><span>Safe Circle</span></div>
+      <div class="contact">Omar <small>Primary Contact</small></div>
+      <div class="contact">Marina <small>Family</small></div>
+      <div class="contact">Yara <small>Family</small></div>
+      <button class="small-btn">+ Add Contact</button>
+    </div>
+
+    <div id="drive" class="screen">
+      <div class="screen-head"><span>Drive Mode</span></div>
+      <div class="camera-box">Camera Preview</div>
+      <p class="hint">Rolling buffer: last 30 seconds</p>
+      <button class="primary full">Start Drive Mode</button>
+    </div>
+
+    <div id="history" class="screen">
+      <div class="screen-head"><span>History</span></div>
+      <div class="event">Emergency Test <small>Location + audio/video evidence</small></div>
+      <div class="event">Drive Incident <small>Last 30 seconds saved</small></div>
+    </div>
+
+    <div id="settings" class="screen">
+      <div class="screen-head"><span>Settings</span></div>
+      <label><input type="checkbox" checked /> Silent Mode</label>
+      <label><input type="checkbox" checked /> Shake Activation</label>
+      <label><input type="checkbox" /> Auto-call emergency contact</label>
+    </div>
+  </section>
+</body>
+</html>
