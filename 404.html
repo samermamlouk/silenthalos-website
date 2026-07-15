@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SilentHalos</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #061426;
+      color: #f4f7fb;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    main {
+      width: min(90%, 560px);
+    }
+
+    a {
+      color: #5dc8ff;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>SilentHalos</h1>
+    <p id="message">Opening the emergency incident…</p>
+    <p><a href="/">Return to SilentHalos</a></p>
+  </main>
+
+  <script>
+    (function () {
+      const parts = window.location.pathname
+        .split("/")
+        .map((part) => decodeURIComponent(part.trim()))
+        .filter(Boolean);
+
+      if (
+        parts.length >= 2 &&
+        parts[0].toLowerCase() === "incident" &&
+        parts[1]
+      ) {
+        const incidentId = encodeURIComponent(parts[1]);
+        window.location.replace(
+          "/incident.html?id=" +
+            incidentId +
+            window.location.hash
+        );
+        return;
+      }
+
+      document.getElementById("message").textContent =
+        "The requested page could not be found.";
+    })();
+  </script>
+</body>
+</html>

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SilentHalos – Emergency Incident</title>
   <link rel="stylesheet" href="style.css" />
-  <script defer src="incident.js"></script>
+  <script type="module" src="incident.js"></script>
 </head>
 <body class="incident-body">
   <header class="nav incident-nav">
@@ -21,7 +21,7 @@
       <p class="eyebrow danger">Emergency incident link</p>
       <h1>SilentHalos Emergency Alert</h1>
       <p class="subtitle">
-        A trusted contact opened this emergency incident page. Evidence will appear here when cloud sync is connected.
+        This emergency page displays evidence securely synchronized by the SilentHalos safety app.
       </p>
 
       <div class="incident-id-box">
@@ -32,11 +32,11 @@
       <div class="incident-status-row">
         <div>
           <small>Status</small>
-          <strong id="incidentStatus">Waiting for evidence upload</strong>
+          <strong id="incidentStatus">Loading incident...</strong>
         </div>
         <div>
           <small>Created</small>
-          <strong id="incidentTime">Unknown</strong>
+          <strong id="incidentTime">Loading...</strong>
         </div>
       </div>
     </section>
@@ -51,22 +51,22 @@
       <article class="incident-card">
         <div class="incident-icon">📍</div>
         <h3>Live Location</h3>
-        <p id="locationText">Location will appear here once the incident is synced.</p>
-        <a id="locationButton" class="incident-action disabled" href="#">Open Map</a>
+        <p id="locationText">Loading emergency location...</p>
+        <a id="locationButton" class="incident-action disabled" aria-disabled="true">Open Map</a>
       </article>
 
       <article class="incident-card">
         <div class="incident-icon">🎤</div>
         <h3>Audio Evidence</h3>
-        <p>Audio recording will be available after secure upload.</p>
-        <button class="incident-action disabled" type="button">Play Audio</button>
+        <p>Loading audio evidence...</p>
+        <button class="incident-action disabled" type="button">Loading Audio</button>
       </article>
 
       <article class="incident-card">
         <div class="incident-icon">📷</div>
         <h3>Camera Evidence</h3>
-        <p>Emergency photo will be available after secure upload.</p>
-        <button class="incident-action disabled" type="button">View Photo</button>
+        <p>Loading camera evidence...</p>
+        <button class="incident-action disabled" type="button">Loading Photo</button>
       </article>
 
       <article class="incident-card">
@@ -79,7 +79,7 @@
       <article class="incident-card">
         <div class="incident-icon">🔋</div>
         <h3>Device Status</h3>
-        <p id="deviceStatus">Battery, movement and GPS status will appear here later.</p>
+        <p id="deviceStatus">Loading device status...</p>
       </article>
     </section>
 
@@ -87,21 +87,21 @@
       <h2>Incident Timeline</h2>
       <div class="timeline-item active">
         <strong>Alert created</strong>
-        <span>The SilentHalos app generated this emergency incident ID.</span>
+        <span>Loading incident creation details...</span>
       </div>
       <div class="timeline-item">
         <strong>Evidence upload</strong>
-        <span>Pending Firebase / cloud connection.</span>
+        <span>Checking uploaded evidence...</span>
       </div>
       <div class="timeline-item">
         <strong>Trusted contact review</strong>
-        <span>This page is ready to display synced evidence.</span>
+        <span>This page updates automatically when new evidence becomes available.</span>
       </div>
     </section>
   </main>
 
   <footer>
-    <p>© SilentHalos. Emergency incident preview.</p>
+    <p>© SilentHalos. Emergency incident page.</p>
   </footer>
 </body>
 </html>
