@@ -34,6 +34,7 @@ let lastMapPosition = null;
 let markerAnimationFrame = null;
 let lastLocationUpdatedAt = null;
 let liveClockTimer = null;
+let currentIncidentData = null;
 
 let galleryImages = [];
 let currentGalleryIndex = 0;
@@ -267,10 +268,12 @@ function updateLiveLocationMeta(data) {
   );
 
   setText("mapLastUpdate", formatRelativeTime(updatedAt));
+  updateLiveTrackingState(data);
 
   if (!liveClockTimer) {
     liveClockTimer = window.setInterval(() => {
       setText("mapLastUpdate", formatRelativeTime(lastLocationUpdatedAt));
+      if (currentIncidentData) updateLiveTrackingState(currentIncidentData);
     }, 1000);
   }
 }
@@ -507,30 +510,280 @@ function renderLocation(data) {
   }
 }
 
+
+function getIncidentUpdateDate(data) {
+  return toDateSafe(
+    firstUsefulValue(
+      data.location?.updatedAt,
+      data.lastUpdatedAt,
+      data.updatedAt,
+      data.audio?.updatedAt,
+      data.createdAt
+    )
+  );
+}
+
+function updateLiveTrackingState(data) {
+  const badge = document.getElementById("mapLiveBadge");
+  const label = document.getElementById("mapLiveLabel");
+  if (!badge || !label) return;
+
+  const updateDate = getIncidentUpdateDate(data);
+  const ageSeconds = updateDate
+    ? Math.max(0, Math.floor((Date.now() - updateDate.getTime()) / 1000))
+    : Number.POSITIVE_INFINITY;
+
+  badge.classList.remove("live", "stale", "offline");
+
+  if (ageSeconds <= 90) {
+    badge.classList.add("live");
+    label.textContent = "LIVE TRACKING";
+  } else if (ageSeconds <= 600) {
+    badge.classList.add("stale");
+    label.textContent = "LAST KNOWN LOCATION";
+  } else {
+    badge.classList.add("offline");
+    label.textContent = "TRACKING PAUSED";
+  }
+}
+
+function formatDuration(seconds) {
+  const safe = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;
+  const minutes = Math.floor(safe / 60);
+  const remaining = safe % 60;
+  return `${minutes}:${String(remaining).padStart(2, "0")}`;
+}
+
+function drawFallbackWaveform(canvas) {
+  if (!canvas) return;
+
+  const context = canvas.getContext("2d");
+  const width = canvas.clientWidth || 560;
+  const height = canvas.clientHeight || 78;
+  const ratio = window.devicePixelRatio || 1;
+
+  canvas.width = Math.max(1, Math.round(width * ratio));
+  canvas.height = Math.max(1, Math.round(height * ratio));
+  context.setTransform(ratio, 0, 0, ratio, 0, 0);
+  context.clearRect(0, 0, width, height);
+  context.fillStyle = "rgba(125, 211, 252, 0.34)";
+
+  const bars = 72;
+  const gap = 3;
+  const barWidth = Math.max(2, (width - gap * (bars - 1)) / bars);
+
+  for (let index = 0; index < bars; index += 1) {
+    const wave =
+      0.3 +
+      Math.abs(Math.sin(index * 0.39)) * 0.42 +
+      Math.abs(Math.cos(index * 0.17)) * 0.2;
+    const barHeight = Math.max(5, wave * height * 0.72);
+    const x = index * (barWidth + gap);
+    const y = (height - barHeight) / 2;
+    context.beginPath();
+    context.roundRect(x, y, barWidth, barHeight, 3);
+    context.fill();
+  }
+}
+
+async function drawRealWaveform(canvas, audioUrl) {
+  drawFallbackWaveform(canvas);
+
+  try {
+    const response = await fetch(audioUrl, { mode: "cors" });
+    if (!response.ok) throw new Error(`Audio fetch failed: ${response.status}`);
+
+    const arrayBuffer = await response.arrayBuffer();
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContextClass) return;
+
+    const audioContext = new AudioContextClass();
+    const audioBuffer = await audioContext.decodeAudioData(arrayBuffer.slice(0));
+    const channel = audioBuffer.getChannelData(0);
+
+    const context = canvas.getContext("2d");
+    const width = canvas.clientWidth || 560;
+    const height = canvas.clientHeight || 78;
+    const ratio = window.devicePixelRatio || 1;
+
+    canvas.width = Math.max(1, Math.round(width * ratio));
+    canvas.height = Math.max(1, Math.round(height * ratio));
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.clearRect(0, 0, width, height);
+
+    const bars = 84;
+    const gap = 3;
+    const barWidth = Math.max(2, (width - gap * (bars - 1)) / bars);
+    const samplesPerBar = Math.max(1, Math.floor(channel.length / bars));
+    const peaks = [];
+
+    for (let bar = 0; bar < bars; bar += 1) {
+      let peak = 0;
+      const start = bar * samplesPerBar;
+      const end = Math.min(channel.length, start + samplesPerBar);
+
+      for (let index = start; index < end; index += 1) {
+        peak = Math.max(peak, Math.abs(channel[index]));
+      }
+
+      peaks.push(peak);
+    }
+
+    const maximum = Math.max(...peaks, 0.001);
+    context.fillStyle = "rgba(125, 211, 252, 0.58)";
+
+    peaks.forEach((peak, index) => {
+      const normalized = peak / maximum;
+      const barHeight = Math.max(5, normalized * height * 0.8);
+      const x = index * (barWidth + gap);
+      const y = (height - barHeight) / 2;
+      context.beginPath();
+      context.roundRect(x, y, barWidth, barHeight, 3);
+      context.fill();
+    });
+
+    await audioContext.close();
+  } catch (error) {
+    console.warn("SilentHalos waveform fallback:", error);
+  }
+}
+
+function createPremiumAudioPlayer(audioUrl) {
+  const wrapper = document.createElement("div");
+  wrapper.className = "premium-audio-player";
+
+  const header = document.createElement("div");
+  header.className = "premium-audio-header";
+
+  const titleGroup = document.createElement("div");
+  titleGroup.className = "premium-audio-title-group";
+
+  const icon = document.createElement("span");
+  icon.className = "premium-audio-icon";
+  icon.textContent = "🎤";
+
+  const titles = document.createElement("div");
+  const title = document.createElement("strong");
+  title.textContent = "Emergency Recording";
+  const subtitle = document.createElement("span");
+  subtitle.textContent = "Secure evidence audio";
+  titles.append(title, subtitle);
+
+  titleGroup.append(icon, titles);
+
+  const durationLabel = document.createElement("span");
+  durationLabel.className = "premium-audio-duration";
+  durationLabel.textContent = "0:00";
+
+  header.append(titleGroup, durationLabel);
+
+  const canvas = document.createElement("canvas");
+  canvas.className = "premium-audio-waveform";
+
+  const controls = document.createElement("div");
+  controls.className = "premium-audio-controls";
+
+  const playButton = document.createElement("button");
+  playButton.type = "button";
+  playButton.className = "premium-audio-play";
+  playButton.textContent = "▶";
+
+  const timeLabel = document.createElement("span");
+  timeLabel.className = "premium-audio-time";
+  timeLabel.textContent = "0:00";
+
+  const progress = document.createElement("input");
+  progress.type = "range";
+  progress.min = "0";
+  progress.max = "1000";
+  progress.value = "0";
+  progress.className = "premium-audio-progress";
+
+  const audio = document.createElement("audio");
+  audio.preload = "metadata";
+  audio.src = audioUrl;
+
+  playButton.addEventListener("click", async () => {
+    if (audio.paused) {
+      try {
+        await audio.play();
+      } catch (error) {
+        console.error("SilentHalos audio playback failed:", error);
+      }
+    } else {
+      audio.pause();
+    }
+  });
+
+  audio.addEventListener("play", () => {
+    playButton.textContent = "❚❚";
+    wrapper.classList.add("playing");
+  });
+
+  audio.addEventListener("pause", () => {
+    playButton.textContent = "▶";
+    wrapper.classList.remove("playing");
+  });
+
+  audio.addEventListener("loadedmetadata", () => {
+    durationLabel.textContent = formatDuration(audio.duration);
+  });
+
+  audio.addEventListener("timeupdate", () => {
+    timeLabel.textContent = formatDuration(audio.currentTime);
+    if (Number.isFinite(audio.duration) && audio.duration > 0) {
+      progress.value = String(
+        Math.round((audio.currentTime / audio.duration) * 1000)
+      );
+    }
+  });
+
+  audio.addEventListener("ended", () => {
+    progress.value = "0";
+    timeLabel.textContent = "0:00";
+  });
+
+  progress.addEventListener("input", () => {
+    if (Number.isFinite(audio.duration) && audio.duration > 0) {
+      audio.currentTime = (Number(progress.value) / 1000) * audio.duration;
+    }
+  });
+
+  controls.append(playButton, timeLabel, progress);
+  wrapper.append(header, canvas, controls, audio);
+
+  requestAnimationFrame(() => drawRealWaveform(canvas, audioUrl));
+  return wrapper;
+}
+
 function renderAudio(data) {
   const card = findCardByHeading("Audio Evidence");
   if (!card) return;
 
   const paragraph = card.querySelector("p");
-  const oldAction = card.querySelector("button, a, audio");
-  const audioUrl = firstUsefulValue(data.audioUrl, data.audio?.url);
+  const oldAction = card.querySelector("button, a, audio, .premium-audio-player");
 
-  if (!audioUrl) {
-    if (paragraph) paragraph.textContent = "Audio evidence is not available yet.";
+  const audioUrl = firstUsefulValue(
+    data.audioUrl,
+    data.audio?.url,
+    data.audio?.downloadUrl
+  );
+
+  if (audioUrl) {
+    if (paragraph) {
+      paragraph.textContent = "Secure emergency audio is available below.";
+    }
+
+    if (oldAction) oldAction.remove();
+    card.appendChild(createPremiumAudioPlayer(audioUrl));
     return;
   }
 
-  if (paragraph) paragraph.textContent = "Secure emergency audio is available below.";
+  if (paragraph) {
+    paragraph.textContent = "Audio evidence is not available yet.";
+  }
 
-  const audio = document.createElement("audio");
-  audio.controls = true;
-  audio.preload = "metadata";
-  audio.src = audioUrl;
-  audio.style.width = "100%";
-  audio.setAttribute("aria-label", "Emergency audio evidence");
-
-  if (oldAction) oldAction.replaceWith(audio);
-  else card.appendChild(audio);
+  if (oldAction) oldAction.remove();
 }
 
 async function resolvePhotoUrl(dataUrl, incidentId, filename) {
@@ -844,36 +1097,116 @@ function renderDeviceStatus(data) {
   );
 }
 
+function getTimelineEvents(data) {
+  const events = [];
+  const createdAt = firstUsefulValue(data.createdAt, data.startedAt, data.timeText);
+
+  events.push({
+    title: "Emergency triggered",
+    description: data.triggerLabel || "Emergency alert",
+    timestamp: createdAt,
+    state: "critical"
+  });
+
+  const smsSentAt = firstUsefulValue(data.smsSentAt, data.sms?.sentAt, data.messageSentAt);
+  if (smsSentAt || data.smsSent === true || data.messageSent === true || data.smsStatus === "sent") {
+    events.push({
+      title: "Emergency message sent",
+      description: "Trusted contacts were notified.",
+      timestamp: smsSentAt || createdAt,
+      state: "complete"
+    });
+  }
+
+  const latitude = firstUsefulValue(data.latitude, data.location?.latitude, data.lat);
+  const longitude = firstUsefulValue(data.longitude, data.location?.longitude, data.lng);
+  const locationUpdatedAt = firstUsefulValue(
+    data.location?.updatedAt,
+    data.lastLocationAt,
+    data.lastUpdatedAt,
+    data.updatedAt
+  );
+
+  if (latitude !== undefined && longitude !== undefined) {
+    events.push({
+      title: "Location received",
+      description: "Live emergency coordinates are available.",
+      timestamp: locationUpdatedAt || createdAt,
+      state: "complete"
+    });
+  }
+
+  const hasPhotos =
+    data.storageStatus === "photos_upload_done" ||
+    firstUsefulValue(data.frontPhotoUrl, data.backPhotoUrl) !== undefined;
+
+  if (hasPhotos) {
+    events.push({
+      title: "Camera evidence uploaded",
+      description: "Available emergency photos were secured.",
+      timestamp: firstUsefulValue(data.photosUploadedAt, data.storageUpdatedAt, createdAt),
+      state: "complete"
+    });
+  }
+
+  const hasAudio =
+    data.audioStatus === "audio_upload_done" ||
+    firstUsefulValue(data.audioUrl, data.audio?.url) !== undefined;
+
+  if (hasAudio) {
+    events.push({
+      title: "Audio evidence uploaded",
+      description: "Emergency recording is ready for review.",
+      timestamp: firstUsefulValue(data.audio?.updatedAt, data.audioUploadedAt, createdAt),
+      state: "complete"
+    });
+  }
+
+  if (latitude !== undefined && longitude !== undefined) {
+    events.push({
+      title: "Live tracking active",
+      description: "This page updates automatically when new data arrives.",
+      timestamp: locationUpdatedAt || createdAt,
+      state: "live"
+    });
+  }
+
+  return events;
+}
+
 function renderTimeline(data) {
-  const items = document.querySelectorAll(".timeline-item");
+  const container = document.getElementById("incidentTimelineList");
+  if (!container) return;
 
-  if (items[0]) {
-    const description = items[0].querySelector("span");
+  container.replaceChildren();
 
-    if (description) {
-      description.textContent = `${formatTimestamp(
-        firstUsefulValue(data.createdAt, data.startedAt, data.timeText)
-      )} — ${data.triggerLabel || "Emergency alert"}`;
-    }
-  }
+  getTimelineEvents(data).forEach((event) => {
+    const item = document.createElement("article");
+    item.className = `premium-timeline-item ${event.state}`;
 
-  if (items[1]) {
-    const description = items[1].querySelector("span");
-    const uploaded =
-      data.storageStatus === "photos_upload_done" ||
-      data.audioStatus === "audio_upload_done";
+    const marker = document.createElement("span");
+    marker.className = "premium-timeline-marker";
 
-    if (description) {
-      description.textContent = uploaded
-        ? "Available evidence has been securely uploaded."
-        : "Evidence upload is still in progress.";
-    }
+    const content = document.createElement("div");
+    content.className = "premium-timeline-content";
 
-    items[1].classList.toggle("active", uploaded);
-  }
+    const heading = document.createElement("strong");
+    heading.textContent = event.title;
+
+    const description = document.createElement("span");
+    description.textContent = event.description;
+
+    const time = document.createElement("time");
+    time.textContent = formatTimestamp(event.timestamp);
+
+    content.append(heading, description);
+    item.append(marker, content, time);
+    container.appendChild(item);
+  });
 }
 
 function renderIncident(data, incidentId) {
+  currentIncidentData = data;
   setText("incidentId", data.incidentId || incidentId);
 
   setText(

@@ -316,6 +316,241 @@
       }
     }
 
+
+    .map-live-badge.stale {
+      color: #ffd479;
+      border-color: rgba(255, 196, 92, 0.34);
+      background: rgba(72, 48, 7, 0.52);
+    }
+
+    .map-live-badge.stale .map-live-dot {
+      background: #ffc45c;
+      animation: silenthalos-live-dot 2.2s ease-out infinite;
+    }
+
+    .map-live-badge.offline {
+      color: #ff9aa7;
+      border-color: rgba(255, 102, 122, 0.34);
+      background: rgba(73, 15, 28, 0.52);
+    }
+
+    .map-live-badge.offline .map-live-dot {
+      background: #ff667a;
+      animation: none;
+      box-shadow: none;
+    }
+
+    .premium-audio-player {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid rgba(125, 211, 252, 0.2);
+      border-radius: 18px;
+      background:
+        radial-gradient(circle at 15% 0%, rgba(79, 195, 247, 0.16), transparent 42%),
+        rgba(7, 22, 41, 0.72);
+      box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
+    }
+
+    .premium-audio-header,
+    .premium-audio-title-group,
+    .premium-audio-controls {
+      display: flex;
+      align-items: center;
+    }
+
+    .premium-audio-header {
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .premium-audio-title-group {
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .premium-audio-icon {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 12px;
+      background: rgba(79, 195, 247, 0.14);
+    }
+
+    .premium-audio-title-group div {
+      display: grid;
+      gap: 2px;
+    }
+
+    .premium-audio-title-group strong {
+      color: #f2f8ff;
+      font-size: 14px;
+    }
+
+    .premium-audio-title-group span,
+    .premium-audio-duration,
+    .premium-audio-time {
+      color: rgba(220, 236, 248, 0.68);
+      font-size: 11px;
+    }
+
+    .premium-audio-waveform {
+      display: block;
+      width: 100%;
+      height: 78px;
+      margin-top: 12px;
+    }
+
+    .premium-audio-controls {
+      gap: 10px;
+    }
+
+    .premium-audio-play {
+      display: grid;
+      flex: 0 0 40px;
+      width: 40px;
+      height: 40px;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(125, 211, 252, 0.28);
+      border-radius: 50%;
+      background: linear-gradient(135deg, #34c8ff, #087cff);
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .premium-audio-progress {
+      flex: 1;
+      min-width: 80px;
+      accent-color: #4fc3f7;
+    }
+
+    .timeline-heading-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 20px;
+      margin-bottom: 26px;
+    }
+
+    .timeline-heading-row h2 {
+      margin: 0;
+    }
+
+    .timeline-eyebrow {
+      margin: 0 0 6px;
+      color: #61d5ff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+    }
+
+    .timeline-live-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid rgba(67, 255, 159, 0.2);
+      border-radius: 999px;
+      background: rgba(5, 52, 38, 0.42);
+      color: #7dffba;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .timeline-live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #43ff9f;
+      animation: silenthalos-live-dot 1.5s ease-out infinite;
+    }
+
+    .premium-timeline-list {
+      position: relative;
+      display: grid;
+    }
+
+    .premium-timeline-list::before {
+      content: "";
+      position: absolute;
+      top: 14px;
+      bottom: 14px;
+      left: 11px;
+      width: 2px;
+      background: linear-gradient(to bottom, rgba(79, 195, 247, 0.8), rgba(79, 195, 247, 0.08));
+    }
+
+    .premium-timeline-item {
+      position: relative;
+      display: grid;
+      grid-template-columns: 24px minmax(0, 1fr) auto;
+      gap: 16px;
+      align-items: start;
+      padding: 0 0 24px;
+    }
+
+    .premium-timeline-item:last-child {
+      padding-bottom: 0;
+    }
+
+    .premium-timeline-marker {
+      position: relative;
+      z-index: 2;
+      width: 14px;
+      height: 14px;
+      margin: 5px 0 0 5px;
+      border: 3px solid #07111f;
+      border-radius: 50%;
+      background: #4fc3f7;
+      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.35);
+    }
+
+    .premium-timeline-item.critical .premium-timeline-marker {
+      background: #ff6478;
+    }
+
+    .premium-timeline-item.complete .premium-timeline-marker {
+      background: #43ff9f;
+    }
+
+    .premium-timeline-item.live .premium-timeline-marker {
+      animation: silenthalos-live-dot 1.5s ease-out infinite;
+    }
+
+    .premium-timeline-content {
+      display: grid;
+      gap: 4px;
+    }
+
+    .premium-timeline-content strong {
+      color: #f1f7ff;
+      font-size: 14px;
+    }
+
+    .premium-timeline-content span {
+      color: rgba(218, 233, 245, 0.68);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .premium-timeline-item time {
+      color: rgba(191, 217, 235, 0.62);
+      font-size: 11px;
+      white-space: nowrap;
+    }
+
+    .incident-card,
+    .incident-timeline,
+    .incident-hero {
+      animation: silenthalos-breathe 6s ease-in-out infinite;
+    }
+
+    @keyframes silenthalos-breathe {
+      0%, 100% { box-shadow: 0 0 0 rgba(79, 195, 247, 0); }
+      50% { box-shadow: 0 0 26px rgba(79, 195, 247, 0.035); }
+    }
+
     @media (max-width: 700px) {
       .camera-gallery-grid {
         grid-template-columns: 1fr;
@@ -323,6 +558,19 @@
 
       .incident-map {
         min-height: 320px;
+      }
+
+      .timeline-heading-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .premium-timeline-item {
+        grid-template-columns: 24px minmax(0, 1fr);
+      }
+
+      .premium-timeline-item time {
+        grid-column: 2;
       }
 
       .gallery-modal {
@@ -389,7 +637,7 @@
         <p id="locationText">Loading emergency location...</p>
         <a id="locationButton" class="incident-action disabled" aria-disabled="true">Open Map</a>
         <div class="map-live-meta" aria-live="polite">
-          <span class="map-live-badge"><span class="map-live-dot"></span>LIVE</span>
+          <span id="mapLiveBadge" class="map-live-badge live"><span class="map-live-dot"></span><span id="mapLiveLabel">LIVE TRACKING</span></span>
           <span id="mapAccuracy">GPS accuracy unavailable</span>
           <span id="mapSpeed">Speed unavailable</span>
           <span id="mapLastUpdate">Waiting for update</span>
@@ -434,19 +682,27 @@
       </article>
     </section>
 
-    <section class="incident-timeline">
-      <h2>Incident Timeline</h2>
-      <div class="timeline-item active">
-        <strong>Alert created</strong>
-        <span>Loading incident creation details...</span>
+    <section class="incident-timeline premium-timeline-panel">
+      <div class="timeline-heading-row">
+        <div>
+          <p class="timeline-eyebrow">INCIDENT ACTIVITY</p>
+          <h2>Incident Timeline</h2>
+        </div>
+        <span class="timeline-live-status">
+          <span class="timeline-live-dot"></span>
+          Updating automatically
+        </span>
       </div>
-      <div class="timeline-item">
-        <strong>Evidence upload</strong>
-        <span>Checking uploaded evidence...</span>
-      </div>
-      <div class="timeline-item">
-        <strong>Trusted contact review</strong>
-        <span>This page updates automatically when new evidence becomes available.</span>
+
+      <div id="incidentTimelineList" class="premium-timeline-list">
+        <article class="premium-timeline-item live">
+          <span class="premium-timeline-marker"></span>
+          <div class="premium-timeline-content">
+            <strong>Loading incident activity</strong>
+            <span>Waiting for synchronized evidence.</span>
+          </div>
+          <time>—</time>
+        </article>
       </div>
     </section>
   </main>
