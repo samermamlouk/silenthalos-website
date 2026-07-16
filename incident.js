@@ -26,6 +26,9 @@ const storage = getStorage(app);
 let googleMapsPromise = null;
 let incidentMap = null;
 let incidentMarker = null;
+let incidentAccuracyCircle = null;
+let incidentPulseOverlay = null;
+let lastMapPosition = null;
 
 let galleryImages = [];
 let currentGalleryIndex = 0;
@@ -134,7 +137,82 @@ function loadGoogleMaps() {
   return googleMapsPromise;
 }
 
-async function renderEmbeddedMap(latitude, longitude) {
+function createSilentHalosMarkerIcon() {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="76" viewBox="0 0 64 76">
+      <defs>
+        <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000814" flood-opacity="0.65"/>
+        </filter>
+        <linearGradient id="pin" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0" stop-color="#62d7ff"/>
+          <stop offset="1" stop-color="#006eff"/>
+        </linearGradient>
+      </defs>
+      <g filter="url(#shadow)">
+        <path d="M32 2C15.4 2 2 15.4 2 32c0 22.5 30 42 30 42s30-19.5 30-42C62 15.4 48.6 2 32 2z" fill="url(#pin)"/>
+        <circle cx="32" cy="31" r="19" fill="#071629" stroke="#a8ebff" stroke-width="2"/>
+        <text x="32" y="37" text-anchor="middle" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#ffffff">Sh</text>
+      </g>
+    </svg>`;
+
+  return {
+    url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`,
+    scaledSize: new google.maps.Size(52, 62),
+    anchor: new google.maps.Point(26, 60)
+  };
+}
+
+function createPulseOverlay(maps, position) {
+  class PulseOverlay extends maps.OverlayView {
+    constructor(map, point) {
+      super();
+      this.position = point;
+      this.element = null;
+      this.setMap(map);
+    }
+
+    onAdd() {
+      this.element = document.createElement("div");
+      this.element.className = "silenthalos-map-pulse";
+      this.getPanes().overlayMouseTarget.appendChild(this.element);
+    }
+
+    draw() {
+      if (!this.element) return;
+      const projection = this.getProjection();
+      const pixel = projection.fromLatLngToDivPixel(this.position);
+      this.element.style.left = `${pixel.x}px`;
+      this.element.style.top = `${pixel.y}px`;
+    }
+
+    setPosition(point) {
+      this.position = point;
+      this.draw();
+    }
+
+    onRemove() {
+      this.element?.remove();
+      this.element = null;
+    }
+  }
+
+  return new PulseOverlay(incidentMap, position);
+}
+
+function getAccuracyMeters(data) {
+  const value = firstUsefulValue(
+    data.accuracyMeters,
+    data.locationAccuracy,
+    data.location?.accuracyMeters,
+    data.location?.accuracy
+  );
+
+  const number = Number(value);
+  return Number.isFinite(number) && number > 0 ? number : null;
+}
+
+async function renderEmbeddedMap(latitude, longitude, accuracyMeters = null) {
   const mapElement = document.getElementById("incidentMap");
   if (!mapElement) return;
 
@@ -152,30 +230,97 @@ async function renderEmbeddedMap(latitude, longitude) {
 
   try {
     const maps = await loadGoogleMaps();
-    const position = { lat, lng };
+    const position = new maps.LatLng(lat, lng);
+    const mapStyles = [
+      { elementType: "geometry", stylers: [{ color: "#07111f" }] },
+      { elementType: "labels.text.stroke", stylers: [{ color: "#07111f" }] },
+      { elementType: "labels.text.fill", stylers: [{ color: "#8ea9c1" }] },
+      { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d7e9f7" }] },
+      { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#72b7d4" }] },
+      { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#0a2a2a" }] },
+      { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#72c7b1" }] },
+      { featureType: "road", elementType: "geometry", stylers: [{ color: "#182d42" }] },
+      { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#0d1b2a" }] },
+      { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#b6c8d7" }] },
+      { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#214866" }] },
+      { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#102b40" }] },
+      { featureType: "transit", elementType: "geometry", stylers: [{ color: "#12283a" }] },
+      { featureType: "water", elementType: "geometry", stylers: [{ color: "#031b2b" }] },
+      { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#4da3c7" }] }
+    ];
 
     if (!incidentMap) {
       incidentMap = new maps.Map(mapElement, {
         center: position,
         zoom: 17,
-        mapTypeId: "roadmap",
-        mapTypeControl: false,
+        minZoom: 3,
+        maxZoom: 21,
+        mapTypeId: maps.MapTypeId.ROADMAP,
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+          style: maps.MapTypeControlStyle.HORIZONTAL_BAR,
+          position: maps.ControlPosition.TOP_LEFT,
+          mapTypeIds: [maps.MapTypeId.ROADMAP, maps.MapTypeId.SATELLITE]
+        },
+        zoomControl: true,
         streetViewControl: true,
         fullscreenControl: true,
         clickableIcons: true,
-        gestureHandling: "cooperative"
+        gestureHandling: "cooperative",
+        styles: mapStyles
       });
 
       incidentMarker = new maps.Marker({
         position,
         map: incidentMap,
         title: "SilentHalos emergency location",
-        animation: maps.Animation.DROP
+        icon: createSilentHalosMarkerIcon(),
+        animation: maps.Animation.DROP,
+        optimized: false
       });
+
+      incidentPulseOverlay = createPulseOverlay(maps, position);
     } else {
-      incidentMap.setCenter(position);
+      const moved =
+        !lastMapPosition ||
+        Math.abs(lastMapPosition.lat - lat) > 0.00001 ||
+        Math.abs(lastMapPosition.lng - lng) > 0.00001;
+
       incidentMarker?.setPosition(position);
+      incidentPulseOverlay?.setPosition(position);
+
+      if (moved) {
+        incidentMap.panTo(position);
+      }
     }
+
+    if (accuracyMeters) {
+      if (!incidentAccuracyCircle) {
+        incidentAccuracyCircle = new maps.Circle({
+          strokeColor: "#4fc3f7",
+          strokeOpacity: 0.9,
+          strokeWeight: 2,
+          fillColor: "#4fc3f7",
+          fillOpacity: 0.16,
+          map: incidentMap,
+          center: position,
+          radius: accuracyMeters
+        });
+      } else {
+        incidentAccuracyCircle.setCenter(position);
+        incidentAccuracyCircle.setRadius(accuracyMeters);
+        incidentAccuracyCircle.setMap(incidentMap);
+      }
+
+      const bounds = incidentAccuracyCircle.getBounds();
+      if (bounds && !lastMapPosition) {
+        incidentMap.fitBounds(bounds, 56);
+      }
+    } else if (incidentAccuracyCircle) {
+      incidentAccuracyCircle.setMap(null);
+    }
+
+    lastMapPosition = { lat, lng };
   } catch (error) {
     console.error("SilentHalos Google Maps loading failed:", error);
     mapElement.classList.add("unavailable");
@@ -209,7 +354,7 @@ function renderLocation(data) {
     setActionEnabled(locationButton, locationLink);
 
     if (latitude !== undefined && longitude !== undefined) {
-      renderEmbeddedMap(latitude, longitude);
+      renderEmbeddedMap(latitude, longitude, getAccuracyMeters(data));
     }
   } else {
     if (locationText) {
