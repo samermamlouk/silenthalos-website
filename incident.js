@@ -698,6 +698,7 @@ function createPremiumAudioPlayer(audioUrl) {
   progress.max = "1000";
   progress.value = "0";
   progress.className = "premium-audio-progress";
+  progress.style.setProperty("--audio-progress", "0%");
 
   const audio = document.createElement("audio");
   audio.preload = "metadata";
@@ -732,20 +733,32 @@ function createPremiumAudioPlayer(audioUrl) {
   audio.addEventListener("timeupdate", () => {
     timeLabel.textContent = formatDuration(audio.currentTime);
     if (Number.isFinite(audio.duration) && audio.duration > 0) {
-      progress.value = String(
-        Math.round((audio.currentTime / audio.duration) * 1000)
+      const progressValue = Math.round(
+        (audio.currentTime / audio.duration) * 1000
+      );
+      progress.value = String(progressValue);
+      progress.style.setProperty(
+        "--audio-progress",
+        `${progressValue / 10}%`
       );
     }
   });
 
   audio.addEventListener("ended", () => {
     progress.value = "0";
+    progress.style.setProperty("--audio-progress", "0%");
     timeLabel.textContent = "0:00";
   });
 
   progress.addEventListener("input", () => {
+    const progressValue = Number(progress.value);
+    progress.style.setProperty(
+      "--audio-progress",
+      `${progressValue / 10}%`
+    );
+
     if (Number.isFinite(audio.duration) && audio.duration > 0) {
-      audio.currentTime = (Number(progress.value) / 1000) * audio.duration;
+      audio.currentTime = (progressValue / 1000) * audio.duration;
     }
   });
 
