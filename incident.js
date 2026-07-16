@@ -666,7 +666,7 @@ function createPremiumAudioPlayer(audioUrl) {
   const title = document.createElement("strong");
   title.textContent = "Emergency Recording";
   const subtitle = document.createElement("span");
-  subtitle.textContent = "Secure evidence audio";
+  subtitle.textContent = "Secure emergency evidence";
   titles.append(title, subtitle);
 
   titleGroup.append(icon, titles);
@@ -677,8 +677,29 @@ function createPremiumAudioPlayer(audioUrl) {
 
   header.append(titleGroup, durationLabel);
 
-  const canvas = document.createElement("canvas");
-  canvas.className = "premium-audio-waveform";
+  const waveform = document.createElement("div");
+  waveform.className = "premium-waveform-seek";
+  waveform.tabIndex = 0;
+  waveform.setAttribute("role", "slider");
+  waveform.setAttribute("aria-label", "Emergency recording position");
+  waveform.setAttribute("aria-valuemin", "0");
+  waveform.setAttribute("aria-valuemax", "100");
+  waveform.setAttribute("aria-valuenow", "0");
+
+  const baseCanvas = document.createElement("canvas");
+  baseCanvas.className = "premium-audio-waveform waveform-base";
+
+  const activeLayer = document.createElement("div");
+  activeLayer.className = "waveform-active-layer";
+
+  const activeCanvas = document.createElement("canvas");
+  activeCanvas.className = "premium-audio-waveform waveform-active";
+
+  const playhead = document.createElement("span");
+  playhead.className = "waveform-playhead";
+
+  activeLayer.appendChild(activeCanvas);
+  waveform.append(baseCanvas, activeLayer, playhead);
 
   const controls = document.createElement("div");
   controls.className = "premium-audio-controls";
@@ -686,23 +707,94 @@ function createPremiumAudioPlayer(audioUrl) {
   const playButton = document.createElement("button");
   playButton.type = "button";
   playButton.className = "premium-audio-play";
+  playButton.setAttribute("aria-label", "Play emergency recording");
   playButton.textContent = "▶";
 
   const timeLabel = document.createElement("span");
   timeLabel.className = "premium-audio-time";
   timeLabel.textContent = "0:00";
 
-  const progress = document.createElement("input");
-  progress.type = "range";
-  progress.min = "0";
-  progress.max = "1000";
-  progress.value = "0";
-  progress.className = "premium-audio-progress";
-  progress.style.setProperty("--audio-progress", "0%");
+  const remainingLabel = document.createElement("span");
+  remainingLabel.className = "premium-audio-remaining";
+  remainingLabel.textContent = "-0:00";
 
   const audio = document.createElement("audio");
   audio.preload = "metadata";
   audio.src = audioUrl;
+
+  const setVisualProgress = (ratio) => {
+    const safeRatio = Math.max(0, Math.min(1, Number(ratio) || 0));
+    const percentage = safeRatio * 100;
+
+    activeLayer.style.width = `${percentage}%`;
+    playhead.style.left = `${percentage}%`;
+    playhead.classList.toggle("at-start", safeRatio === 0);
+    playhead.classList.toggle("at-end", safeRatio === 1);
+
+    waveform.setAttribute("aria-valuenow", String(Math.round(percentage)));
+  };
+
+  const seekToRatio = (ratio) => {
+    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+
+    const safeRatio = Math.max(0, Math.min(1, ratio));
+    audio.currentTime = safeRatio * audio.duration;
+    setVisualProgress(safeRatio);
+  };
+
+  const seekFromPointer = (event) => {
+    const rect = waveform.getBoundingClientRect();
+    if (!rect.width) return;
+
+    seekToRatio((event.clientX - rect.left) / rect.width);
+  };
+
+  let seeking = false;
+
+  waveform.addEventListener("pointerdown", (event) => {
+    seeking = true;
+    waveform.setPointerCapture?.(event.pointerId);
+    seekFromPointer(event);
+  });
+
+  waveform.addEventListener("pointermove", (event) => {
+    if (seeking) seekFromPointer(event);
+  });
+
+  const stopSeeking = (event) => {
+    if (!seeking) return;
+    seeking = false;
+    waveform.releasePointerCapture?.(event.pointerId);
+  };
+
+  waveform.addEventListener("pointerup", stopSeeking);
+  waveform.addEventListener("pointercancel", stopSeeking);
+
+  waveform.addEventListener("keydown", (event) => {
+    if (!Number.isFinite(audio.duration) || audio.duration <= 0) return;
+
+    const step = event.shiftKey ? 10 : 5;
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      audio.currentTime = Math.min(audio.duration, audio.currentTime + step);
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      audio.currentTime = Math.max(0, audio.currentTime - step);
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault();
+      audio.currentTime = 0;
+    }
+
+    if (event.key === "End") {
+      event.preventDefault();
+      audio.currentTime = audio.duration;
+    }
+  });
 
   playButton.addEventListener("click", async () => {
     if (audio.paused) {
@@ -718,54 +810,53 @@ function createPremiumAudioPlayer(audioUrl) {
 
   audio.addEventListener("play", () => {
     playButton.textContent = "❚❚";
+    playButton.setAttribute("aria-label", "Pause emergency recording");
     wrapper.classList.add("playing");
   });
 
   audio.addEventListener("pause", () => {
     playButton.textContent = "▶";
+    playButton.setAttribute("aria-label", "Play emergency recording");
     wrapper.classList.remove("playing");
   });
 
   audio.addEventListener("loadedmetadata", () => {
     durationLabel.textContent = formatDuration(audio.duration);
+    remainingLabel.textContent = `-${formatDuration(audio.duration)}`;
+    setVisualProgress(0);
   });
 
   audio.addEventListener("timeupdate", () => {
     timeLabel.textContent = formatDuration(audio.currentTime);
+
     if (Number.isFinite(audio.duration) && audio.duration > 0) {
-      const progressValue = Math.round(
-        (audio.currentTime / audio.duration) * 1000
-      );
-      progress.value = String(progressValue);
-      progress.style.setProperty(
-        "--audio-progress",
-        `${progressValue / 10}%`
-      );
+      const ratio = audio.currentTime / audio.duration;
+      setVisualProgress(ratio);
+      remainingLabel.textContent = `-${formatDuration(
+        Math.max(0, audio.duration - audio.currentTime)
+      )}`;
     }
   });
 
   audio.addEventListener("ended", () => {
-    progress.value = "0";
-    progress.style.setProperty("--audio-progress", "0%");
+    audio.currentTime = 0;
     timeLabel.textContent = "0:00";
+    remainingLabel.textContent = `-${formatDuration(audio.duration)}`;
+    setVisualProgress(0);
   });
 
-  progress.addEventListener("input", () => {
-    const progressValue = Number(progress.value);
-    progress.style.setProperty(
-      "--audio-progress",
-      `${progressValue / 10}%`
-    );
+  controls.append(playButton, timeLabel, remainingLabel);
+  wrapper.append(header, waveform, controls, audio);
 
-    if (Number.isFinite(audio.duration) && audio.duration > 0) {
-      audio.currentTime = (progressValue / 1000) * audio.duration;
-    }
+  requestAnimationFrame(async () => {
+    await Promise.all([
+      drawRealWaveform(baseCanvas, audioUrl),
+      drawRealWaveform(activeCanvas, audioUrl)
+    ]);
+    setVisualProgress(0);
   });
 
-  controls.append(playButton, timeLabel, progress);
-  wrapper.append(header, canvas, controls, audio);
-
-  requestAnimationFrame(() => drawRealWaveform(canvas, audioUrl));
+  setVisualProgress(0);
   return wrapper;
 }
 

@@ -419,75 +419,6 @@
       cursor: pointer;
     }
 
-    .premium-audio-progress {
-      --audio-progress: 0%;
-      flex: 1;
-      min-width: 80px;
-      height: 6px;
-      margin: 0;
-      padding: 0;
-      border: 0;
-      border-radius: 999px;
-      outline: none;
-      appearance: none;
-      -webkit-appearance: none;
-      cursor: pointer;
-      background:
-        linear-gradient(
-          to right,
-          #42bfff 0%,
-          #42bfff var(--audio-progress),
-          rgba(255, 255, 255, 0.42) var(--audio-progress),
-          rgba(255, 255, 255, 0.42) 100%
-        );
-    }
-
-    .premium-audio-progress::-webkit-slider-runnable-track {
-      width: 100%;
-      height: 6px;
-      border: 0;
-      border-radius: 999px;
-      background: transparent;
-    }
-
-    .premium-audio-progress::-webkit-slider-thumb {
-      width: 18px;
-      height: 18px;
-      margin-top: -6px;
-      border: 0;
-      border-radius: 50%;
-      appearance: none;
-      -webkit-appearance: none;
-      background: #42bfff;
-      box-shadow:
-        0 0 0 3px rgba(66, 191, 255, 0.16),
-        0 4px 12px rgba(0, 126, 255, 0.36);
-    }
-
-    .premium-audio-progress::-moz-range-track {
-      width: 100%;
-      height: 6px;
-      border: 0;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.42);
-    }
-
-    .premium-audio-progress::-moz-range-progress {
-      height: 6px;
-      border-radius: 999px;
-      background: #42bfff;
-    }
-
-    .premium-audio-progress::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
-      border: 0;
-      border-radius: 50%;
-      background: #42bfff;
-      box-shadow:
-        0 0 0 3px rgba(66, 191, 255, 0.16),
-        0 4px 12px rgba(0, 126, 255, 0.36);
-    }
 
     .timeline-heading-row {
       display: flex;
@@ -1116,6 +1047,130 @@
 
       .telemetry-grid > div {
         padding: 10px;
+      }
+    }
+
+
+    .premium-waveform-seek {
+      position: relative;
+      width: 100%;
+      height: 84px;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 12px;
+      cursor: pointer;
+      touch-action: none;
+      outline: none;
+    }
+
+    .premium-waveform-seek:focus-visible {
+      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.65);
+    }
+
+    .premium-audio-waveform {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 84px;
+      margin: 0;
+      pointer-events: none;
+    }
+
+    .waveform-base {
+      opacity: 0.38;
+      filter: saturate(0.75);
+    }
+
+    .waveform-active-layer {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .waveform-active {
+      width: 100%;
+      min-width: 100%;
+      opacity: 1;
+      filter: brightness(1.5) saturate(1.35);
+    }
+
+    .waveform-playhead {
+      position: absolute;
+      top: 8px;
+      bottom: 8px;
+      left: 0;
+      width: 2px;
+      border-radius: 999px;
+      background: #71d8ff;
+      box-shadow:
+        0 0 0 1px rgba(113, 216, 255, 0.2),
+        0 0 14px rgba(79, 195, 247, 0.9);
+      transform: translateX(-1px);
+      pointer-events: none;
+    }
+
+    .waveform-playhead::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #71d8ff;
+      box-shadow: 0 0 14px rgba(79, 195, 247, 0.8);
+      transform: translate(-50%, -50%);
+    }
+
+    .waveform-playhead.at-start {
+      transform: translateX(0);
+    }
+
+    .waveform-playhead.at-start::after {
+      left: 0;
+      transform: translate(0, -50%);
+    }
+
+    .waveform-playhead.at-end {
+      transform: translateX(-2px);
+    }
+
+    .waveform-playhead.at-end::after {
+      left: auto;
+      right: 0;
+      transform: translate(0, -50%);
+    }
+
+    .premium-audio-remaining {
+      margin-left: auto;
+      color: rgba(220, 236, 248, 0.58);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .premium-audio-time {
+      min-width: 34px;
+      font-variant-numeric: tabular-nums;
+    }
+
+
+
+    @media (max-width: 700px) {
+      .premium-waveform-seek,
+      .premium-audio-waveform {
+        height: 62px;
+      }
+
+      .premium-waveform-seek {
+        margin-top: 8px;
+      }
+
+      .waveform-playhead {
+        top: 5px;
+        bottom: 5px;
       }
     }
 
