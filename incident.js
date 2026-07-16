@@ -28,7 +28,12 @@ let incidentMap = null;
 let incidentMarker = null;
 let incidentAccuracyCircle = null;
 let incidentPulseOverlay = null;
+let incidentTrail = null;
+let incidentTrailPoints = [];
 let lastMapPosition = null;
+let markerAnimationFrame = null;
+let lastLocationUpdatedAt = null;
+let liveClockTimer = null;
 
 let galleryImages = [];
 let currentGalleryIndex = 0;
@@ -212,6 +217,138 @@ function getAccuracyMeters(data) {
   return Number.isFinite(number) && number > 0 ? number : null;
 }
 
+function toDateSafe(value) {
+  if (!value) return null;
+
+  try {
+    const date = typeof value.toDate === "function" ? value.toDate() : new Date(value);
+    return Number.isNaN(date.getTime()) ? null : date;
+  } catch (_) {
+    return null;
+  }
+}
+
+function formatRelativeTime(value) {
+  const date = toDateSafe(value);
+  if (!date) return "Waiting for update";
+
+  const seconds = Math.max(0, Math.floor((Date.now() - date.getTime()) / 1000));
+
+  if (seconds < 5) return "Updated now";
+  if (seconds < 60) return `Updated ${seconds} sec ago`;
+
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `Updated ${minutes} min ago`;
+
+  const hours = Math.floor(minutes / 60);
+  return `Updated ${hours} hr ago`;
+}
+
+function updateLiveLocationMeta(data) {
+  const accuracy = getAccuracyMeters(data);
+  const speed = Number(firstUsefulValue(data.speedKmh, data.deviceStatus?.speedKmh));
+  const updatedAt = firstUsefulValue(
+    data.location?.updatedAt,
+    data.lastUpdatedAt,
+    data.updatedAt,
+    data.createdAt
+  );
+
+  lastLocationUpdatedAt = updatedAt;
+
+  setText(
+    "mapAccuracy",
+    accuracy ? `Accuracy ±${Math.round(accuracy)} m` : "GPS accuracy unavailable"
+  );
+
+  setText(
+    "mapSpeed",
+    Number.isFinite(speed) ? `Speed ${Math.round(speed)} km/h` : "Speed unavailable"
+  );
+
+  setText("mapLastUpdate", formatRelativeTime(updatedAt));
+
+  if (!liveClockTimer) {
+    liveClockTimer = window.setInterval(() => {
+      setText("mapLastUpdate", formatRelativeTime(lastLocationUpdatedAt));
+    }, 1000);
+  }
+}
+
+function animateMarkerTo(maps, targetPosition) {
+  if (!incidentMarker) return;
+
+  const current = incidentMarker.getPosition();
+  if (!current) {
+    incidentMarker.setPosition(targetPosition);
+    incidentPulseOverlay?.setPosition(targetPosition);
+    return;
+  }
+
+  if (markerAnimationFrame) {
+    cancelAnimationFrame(markerAnimationFrame);
+  }
+
+  const startLat = current.lat();
+  const startLng = current.lng();
+  const endLat = targetPosition.lat();
+  const endLng = targetPosition.lng();
+  const startedAt = performance.now();
+  const duration = 900;
+
+  const step = (now) => {
+    const progress = Math.min(1, (now - startedAt) / duration);
+    const eased = 1 - Math.pow(1 - progress, 3);
+
+    const position = new maps.LatLng(
+      startLat + (endLat - startLat) * eased,
+      startLng + (endLng - startLng) * eased
+    );
+
+    incidentMarker.setPosition(position);
+    incidentPulseOverlay?.setPosition(position);
+
+    if (progress < 1) {
+      markerAnimationFrame = requestAnimationFrame(step);
+    } else {
+      markerAnimationFrame = null;
+    }
+  };
+
+  markerAnimationFrame = requestAnimationFrame(step);
+}
+
+function appendTrailPoint(maps, position) {
+  const lastPoint = incidentTrailPoints.at(-1);
+
+  if (
+    lastPoint &&
+    Math.abs(lastPoint.lat() - position.lat()) < 0.000005 &&
+    Math.abs(lastPoint.lng() - position.lng()) < 0.000005
+  ) {
+    return;
+  }
+
+  incidentTrailPoints.push(position);
+
+  if (incidentTrailPoints.length > 100) {
+    incidentTrailPoints.shift();
+  }
+
+  if (!incidentTrail) {
+    incidentTrail = new maps.Polyline({
+      path: incidentTrailPoints,
+      geodesic: true,
+      strokeColor: "#4fc3f7",
+      strokeOpacity: 0.92,
+      strokeWeight: 5,
+      map: incidentMap
+    });
+  } else {
+    incidentTrail.setPath(incidentTrailPoints);
+  }
+}
+
 async function renderEmbeddedMap(latitude, longitude, accuracyMeters = null) {
   const mapElement = document.getElementById("incidentMap");
   if (!mapElement) return;
@@ -252,7 +389,7 @@ async function renderEmbeddedMap(latitude, longitude, accuracyMeters = null) {
     if (!incidentMap) {
       incidentMap = new maps.Map(mapElement, {
         center: position,
-        zoom: 17,
+        zoom: 18,
         minZoom: 3,
         maxZoom: 21,
         mapTypeId: maps.MapTypeId.ROADMAP,
@@ -280,16 +417,16 @@ async function renderEmbeddedMap(latitude, longitude, accuracyMeters = null) {
       });
 
       incidentPulseOverlay = createPulseOverlay(maps, position);
+      appendTrailPoint(maps, position);
     } else {
       const moved =
         !lastMapPosition ||
         Math.abs(lastMapPosition.lat - lat) > 0.00001 ||
         Math.abs(lastMapPosition.lng - lng) > 0.00001;
 
-      incidentMarker?.setPosition(position);
-      incidentPulseOverlay?.setPosition(position);
-
       if (moved) {
+        animateMarkerTo(maps, position);
+        appendTrailPoint(maps, position);
         incidentMap.panTo(position);
       }
     }
@@ -354,6 +491,7 @@ function renderLocation(data) {
     setActionEnabled(locationButton, locationLink);
 
     if (latitude !== undefined && longitude !== undefined) {
+      updateLiveLocationMeta(data);
       renderEmbeddedMap(latitude, longitude, getAccuracyMeters(data));
     }
   } else {
