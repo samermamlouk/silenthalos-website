@@ -1069,32 +1069,202 @@ async function renderCamera(data, incidentId) {
   gallery.appendChild(grid);
 }
 
-function renderDeviceStatus(data) {
-  const batteryPercent = firstUsefulValue(
-    data.batteryPercent,
-    data.deviceStatus?.batteryPercent
-  );
-  const gps = firstUsefulValue(data.deviceStatus?.gps);
-  const speedKmh = firstUsefulValue(data.speedKmh, data.deviceStatus?.speedKmh);
 
+function calculateIncidentSeverity(data) {
+  const explicit = String(
+    firstUsefulValue(
+      data.severity,
+      data.severityLevel,
+      data.riskLevel,
+      data.priority
+    ) || ""
+  ).toLowerCase();
+
+  if (["critical", "high", "medium", "low"].includes(explicit)) {
+    return explicit;
+  }
+
+  const trigger = String(
+    firstUsefulValue(data.triggerLabel, data.triggerType, data.type) || ""
+  ).toLowerCase();
+
+  const speed = Number(
+    firstUsefulValue(data.speedKmh, data.deviceStatus?.speedKmh, 0)
+  );
+
+  const battery = Number(
+    firstUsefulValue(data.batteryPercent, data.deviceStatus?.batteryPercent, 100)
+  );
+
+  if (
+    trigger.includes("accident") ||
+    trigger.includes("crash") ||
+    trigger.includes("collision") ||
+    speed >= 80
+  ) {
+    return "critical";
+  }
+
+  if (
+    trigger.includes("shake") ||
+    trigger.includes("sos") ||
+    trigger.includes("emergency") ||
+    speed >= 35
+  ) {
+    return "high";
+  }
+
+  if (battery <= 15) {
+    return "medium";
+  }
+
+  return "high";
+}
+
+function renderSeverity(data) {
+  const level = calculateIncidentSeverity(data);
+  const badge = document.getElementById("severityBadge");
+  const label = document.getElementById("severityLabel");
+  const description = document.getElementById("severityDescription");
+
+  if (!badge || !label || !description) return;
+
+  badge.className = `severity-badge ${level}`;
+  label.textContent = level.toUpperCase();
+
+  const descriptions = {
+    critical: "Immediate attention recommended.",
+    high: "Urgent incident requiring prompt review.",
+    medium: "Important incident requiring review.",
+    low: "Incident information available for review."
+  };
+
+  description.textContent = descriptions[level];
+}
+
+function getDeviceTelemetry(data) {
+  const battery = Number(
+    firstUsefulValue(data.batteryPercent, data.deviceStatus?.batteryPercent)
+  );
+
+  const speed = Number(
+    firstUsefulValue(data.speedKmh, data.deviceStatus?.speedKmh)
+  );
+
+  const gps = String(
+    firstUsefulValue(data.deviceStatus?.gps, data.gpsStatus, "unknown")
+  );
+
+  const accuracy = getAccuracyMeters(data);
+
+  const heading = Number(
+    firstUsefulValue(
+      data.heading,
+      data.headingDegrees,
+      data.deviceStatus?.heading
+    )
+  );
+
+  const network = String(
+    firstUsefulValue(
+      data.networkType,
+      data.connectionType,
+      data.deviceStatus?.network,
+      "unknown"
+    )
+  );
+
+  return {
+    battery: Number.isFinite(battery) ? Math.round(battery) : null,
+    speed: Number.isFinite(speed) ? Math.round(speed) : null,
+    gps,
+    accuracy: accuracy ? Math.round(accuracy) : null,
+    heading: Number.isFinite(heading) ? Math.round(heading) : null,
+    network
+  };
+}
+
+function compassDirection(degrees) {
+  if (!Number.isFinite(degrees)) return "Unavailable";
+
+  const directions = ["N", "NE", "E", "SE", "S", "SW", "W", "NW"];
+  return directions[Math.round(((degrees % 360) + 360) % 360 / 45) % 8];
+}
+
+function renderTelemetry(data) {
+  const telemetry = getDeviceTelemetry(data);
+
+  setText(
+    "telemetryBattery",
+    telemetry.battery !== null ? `${telemetry.battery}%` : "Unavailable"
+  );
+
+  setText(
+    "telemetrySpeed",
+    telemetry.speed !== null ? `${telemetry.speed} km/h` : "Unavailable"
+  );
+
+  setText(
+    "telemetryGps",
+    telemetry.gps && telemetry.gps !== "unknown"
+      ? telemetry.gps
+      : "Unavailable"
+  );
+
+  setText(
+    "telemetryAccuracy",
+    telemetry.accuracy !== null ? `±${telemetry.accuracy} m` : "Unavailable"
+  );
+
+  setText(
+    "telemetryHeading",
+    telemetry.heading !== null
+      ? `${telemetry.heading}° ${compassDirection(telemetry.heading)}`
+      : "Unavailable"
+  );
+
+  setText(
+    "telemetryNetwork",
+    telemetry.network && telemetry.network !== "unknown"
+      ? telemetry.network
+      : "Unavailable"
+  );
+
+  const batteryBar = document.getElementById("batteryLevelFill");
+  if (batteryBar) {
+    const percentage = telemetry.battery ?? 0;
+    batteryBar.style.width = `${Math.max(0, Math.min(100, percentage))}%`;
+    batteryBar.className =
+      percentage <= 15
+        ? "battery-level-fill critical"
+        : percentage <= 35
+          ? "battery-level-fill warning"
+          : "battery-level-fill";
+  }
+}
+
+function renderDeviceStatus(data) {
+  const telemetry = getDeviceTelemetry(data);
   const parts = [];
 
-  if (batteryPercent !== undefined) {
-    parts.push(`Battery: ${Math.round(Number(batteryPercent))}%`);
+  if (telemetry.battery !== null) {
+    parts.push(`Battery: ${telemetry.battery}%`);
   }
 
-  if (gps) {
-    parts.push(`GPS: ${gps}`);
+  if (telemetry.gps && telemetry.gps !== "unknown") {
+    parts.push(`GPS: ${telemetry.gps}`);
   }
 
-  if (speedKmh !== undefined) {
-    parts.push(`Speed: ${Number(speedKmh).toFixed(0)} km/h`);
+  if (telemetry.speed !== null) {
+    parts.push(`Speed: ${telemetry.speed} km/h`);
   }
 
   setText(
     "deviceStatus",
     parts.length ? parts.join(" • ") : "Device status is not available yet."
   );
+
+  renderTelemetry(data);
 }
 
 function getTimelineEvents(data) {
@@ -1228,6 +1398,7 @@ function renderIncident(data, incidentId) {
     )
   );
 
+  renderSeverity(data);
   renderLocation(data);
   renderAudio(data);
   renderCamera(data, incidentId);

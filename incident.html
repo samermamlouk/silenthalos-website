@@ -892,6 +892,169 @@
       }
     }
 
+
+    .severity-panel {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 22px;
+      padding: 14px 16px;
+      border: 1px solid rgba(255, 100, 120, 0.22);
+      border-radius: 18px;
+      background: rgba(255, 100, 120, 0.06);
+    }
+
+    .severity-panel > div {
+      display: grid;
+      gap: 3px;
+    }
+
+    .severity-panel small {
+      color: rgba(218, 233, 245, 0.62);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .severity-panel strong {
+      color: #f2f8ff;
+      font-size: 14px;
+    }
+
+    .severity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 104px;
+      justify-content: center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    .severity-badge.critical {
+      color: #fff;
+      background: rgba(255, 55, 83, 0.22);
+      border: 1px solid rgba(255, 55, 83, 0.58);
+    }
+
+    .severity-badge.high {
+      color: #ffd9df;
+      background: rgba(255, 100, 120, 0.16);
+      border: 1px solid rgba(255, 100, 120, 0.42);
+    }
+
+    .severity-badge.medium {
+      color: #ffe3a0;
+      background: rgba(255, 184, 77, 0.14);
+      border: 1px solid rgba(255, 184, 77, 0.38);
+    }
+
+    .severity-badge.low {
+      color: #b8ffd7;
+      background: rgba(67, 255, 159, 0.12);
+      border: 1px solid rgba(67, 255, 159, 0.32);
+    }
+
+    .severity-pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 0 currentColor;
+      animation: severity-pulse 1.7s ease-out infinite;
+    }
+
+    @keyframes severity-pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 100, 120, 0.45); }
+      70% { box-shadow: 0 0 0 8px rgba(255, 100, 120, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 100, 120, 0); }
+    }
+
+    .battery-level {
+      height: 8px;
+      margin-top: 16px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .battery-level-fill {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #43ff9f, #4fc3f7);
+      transition: width 500ms ease;
+    }
+
+    .battery-level-fill.warning {
+      background: linear-gradient(90deg, #ffb84d, #ffd479);
+    }
+
+    .battery-level-fill.critical {
+      background: linear-gradient(90deg, #ff3753, #ff7186);
+    }
+
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .telemetry-grid > div {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid rgba(125, 211, 252, 0.14);
+      border-radius: 14px;
+      background: rgba(7, 22, 41, 0.46);
+    }
+
+    .telemetry-grid small {
+      color: rgba(191, 217, 235, 0.6);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .telemetry-grid strong {
+      color: #eef8ff;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 700px) {
+      .severity-panel {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 18px;
+        padding: 12px 14px;
+      }
+
+      .severity-badge {
+        min-width: 92px;
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+
+      .telemetry-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .telemetry-grid > div {
+        padding: 10px;
+      }
+    }
+
 </style>
 </head>
 
@@ -911,6 +1074,17 @@
       <p class="subtitle">
         This emergency page displays evidence securely synchronized by the SilentHalos safety app.
       </p>
+
+      <div class="severity-panel" aria-live="polite">
+        <span id="severityBadge" class="severity-badge high">
+          <span class="severity-pulse"></span>
+          <span id="severityLabel">HIGH</span>
+        </span>
+        <div>
+          <small>Severity level</small>
+          <strong id="severityDescription">Urgent incident requiring prompt review.</strong>
+        </div>
+      </div>
 
       <div class="incident-id-box">
         <span>Incident ID</span>
@@ -980,10 +1154,41 @@
         <button class="incident-action disabled" type="button">Coming Soon</button>
       </article>
 
-      <article class="incident-card">
+      <article class="incident-card telemetry-card">
         <div class="incident-icon">🔋</div>
-        <h3>Device Status</h3>
+        <h3>Device Telemetry</h3>
         <p id="deviceStatus">Loading device status...</p>
+
+        <div class="battery-level">
+          <span id="batteryLevelFill" class="battery-level-fill"></span>
+        </div>
+
+        <div class="telemetry-grid">
+          <div>
+            <small>Battery</small>
+            <strong id="telemetryBattery">Loading...</strong>
+          </div>
+          <div>
+            <small>Speed</small>
+            <strong id="telemetrySpeed">Loading...</strong>
+          </div>
+          <div>
+            <small>GPS</small>
+            <strong id="telemetryGps">Loading...</strong>
+          </div>
+          <div>
+            <small>Accuracy</small>
+            <strong id="telemetryAccuracy">Loading...</strong>
+          </div>
+          <div>
+            <small>Direction</small>
+            <strong id="telemetryHeading">Loading...</strong>
+          </div>
+          <div>
+            <small>Network</small>
+            <strong id="telemetryNetwork">Loading...</strong>
+          </div>
+        </div>
       </article>
     </section>
 
