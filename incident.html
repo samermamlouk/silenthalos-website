@@ -194,6 +194,30 @@
       backdrop-filter: blur(8px);
     }
 
+    .incident-map {
+      width: 100%;
+      min-height: 250px;
+      margin-top: 16px;
+      overflow: hidden;
+      border-radius: 16px;
+      border: 1px solid rgba(79, 195, 247, 0.22);
+      background: linear-gradient(
+        135deg,
+        rgba(79, 195, 247, 0.08),
+        rgba(255, 255, 255, 0.03)
+      );
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .incident-map.unavailable {
+      padding: 20px;
+    }
+
     @media (max-width: 700px) {
       .camera-gallery-grid {
         grid-template-columns: 1fr;
@@ -262,6 +286,14 @@
         <h3>Live Location</h3>
         <p id="locationText">Loading emergency location...</p>
         <a id="locationButton" class="incident-action disabled" aria-disabled="true">Open Map</a>
+        <div
+          id="incidentMap"
+          class="incident-map"
+          role="region"
+          aria-label="Interactive emergency location map"
+        >
+          Loading interactive map...
+        </div>
       </article>
 
       <article class="incident-card">

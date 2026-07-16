@@ -9,7 +9,7 @@ import {
   ref,
   getDownloadURL
 } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-storage.js";
-
+const GOOGLE_MAPS_API_KEY = "AIzaSyCP-RoMmPgxEOVdRDQGRUBuQEGga9j2CuM";
 const firebaseConfig = {
   apiKey: "AIzaSyDFC1K702rTy76nVdVbNj8f2vcd7XEi9UM",
   authDomain: "silenthalos-dcfe1.firebaseapp.com",
@@ -22,6 +22,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage(app);
+
+let googleMapsPromise = null;
+let incidentMap = null;
+let incidentMarker = null;
 
 let galleryImages = [];
 let currentGalleryIndex = 0;
@@ -93,6 +97,93 @@ function setActionEnabled(element, href) {
   element.rel = "noopener noreferrer";
 }
 
+function loadGoogleMaps() {
+  if (window.google?.maps) return Promise.resolve(window.google.maps);
+
+  if (!GOOGLE_MAPS_API_KEY || GOOGLE_MAPS_API_KEY === "PASTE_YOUR_KEY_HERE") {
+    return Promise.reject(new Error("Google Maps API key is missing."));
+  }
+
+  if (googleMapsPromise) return googleMapsPromise;
+
+  googleMapsPromise = new Promise((resolve, reject) => {
+    const callbackName = "__silentHalosGoogleMapsReady";
+
+    window[callbackName] = () => {
+      delete window[callbackName];
+      resolve(window.google.maps);
+    };
+
+    const script = document.createElement("script");
+    script.src =
+      `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
+        GOOGLE_MAPS_API_KEY
+      )}&callback=${callbackName}&v=weekly`;
+    script.async = true;
+    script.defer = true;
+
+    script.onerror = () => {
+      delete window[callbackName];
+      googleMapsPromise = null;
+      reject(new Error("Google Maps could not be loaded."));
+    };
+
+    document.head.appendChild(script);
+  });
+
+  return googleMapsPromise;
+}
+
+async function renderEmbeddedMap(latitude, longitude) {
+  const mapElement = document.getElementById("incidentMap");
+  if (!mapElement) return;
+
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+    mapElement.classList.add("unavailable");
+    mapElement.textContent = "Interactive map is not available yet.";
+    return;
+  }
+
+  mapElement.classList.remove("unavailable");
+  mapElement.textContent = "Loading interactive map...";
+
+  try {
+    const maps = await loadGoogleMaps();
+    const position = { lat, lng };
+
+    if (!incidentMap) {
+      incidentMap = new maps.Map(mapElement, {
+        center: position,
+        zoom: 17,
+        mapTypeId: "roadmap",
+        mapTypeControl: false,
+        streetViewControl: true,
+        fullscreenControl: true,
+        clickableIcons: true,
+        gestureHandling: "cooperative"
+      });
+
+      incidentMarker = new maps.Marker({
+        position,
+        map: incidentMap,
+        title: "SilentHalos emergency location",
+        animation: maps.Animation.DROP
+      });
+    } else {
+      incidentMap.setCenter(position);
+      incidentMarker?.setPosition(position);
+    }
+  } catch (error) {
+    console.error("SilentHalos Google Maps loading failed:", error);
+    mapElement.classList.add("unavailable");
+    mapElement.textContent =
+      "Interactive map could not be loaded. Use Open Map instead.";
+  }
+}
+
 function renderLocation(data) {
   const latitude = firstUsefulValue(data.latitude, data.location?.latitude);
   const longitude = firstUsefulValue(data.longitude, data.location?.longitude);
@@ -116,8 +207,20 @@ function renderLocation(data) {
     }
 
     setActionEnabled(locationButton, locationLink);
-  } else if (locationText) {
-    locationText.textContent = "Location is not available yet.";
+
+    if (latitude !== undefined && longitude !== undefined) {
+      renderEmbeddedMap(latitude, longitude);
+    }
+  } else {
+    if (locationText) {
+      locationText.textContent = "Location is not available yet.";
+    }
+
+    const mapElement = document.getElementById("incidentMap");
+    if (mapElement) {
+      mapElement.classList.add("unavailable");
+      mapElement.textContent = "Interactive map is not available yet.";
+    }
   }
 }
 
