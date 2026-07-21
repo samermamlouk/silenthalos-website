@@ -860,34 +860,134 @@ function createPremiumAudioPlayer(audioUrl) {
   return wrapper;
 }
 
-function renderAudio(data) {
-  const card = findCardByHeading("Audio Evidence");
-  if (!card) return;
+function normalizeAudioRecordings(data) {
+  const candidates = [
+    data.audioChunks,
+    data.audioRecordings,
+    data.audioClips,
+    data.recordings,
+    data.audio?.recordings,
+    data.audio?.clips,
+    data.audioUpdates
+  ];
 
-  const paragraph = card.querySelector("p");
-  const oldAction = card.querySelector("button, a, audio, .premium-audio-player");
+  const source = candidates.find((value) => Array.isArray(value)) || [];
+  const recordings = source
+    .map((item, index) => {
+      if (typeof item === "string") {
+        return {
+          url: item,
+          createdAt: null,
+          sequence: index + 1,
+          durationSeconds: null
+        };
+      }
 
-  const audioUrl = firstUsefulValue(
+      if (!item || typeof item !== "object") return null;
+
+      const url = firstUsefulValue(
+        item.url,
+        item.audioUrl,
+        item.downloadUrl,
+        item.storageUrl,
+        item.fileUrl
+      );
+
+      if (!url) return null;
+
+      return {
+        url,
+        createdAt: firstUsefulValue(
+          item.createdAt,
+          item.recordedAt,
+          item.uploadedAt,
+          item.updatedAt,
+          item.timestamp,
+          item.timestampMs,
+          item.uploadedAtMs
+        ),
+        sequence: Number(firstUsefulValue(item.sequence, item.index, index + 1)),
+        durationSeconds: Number(
+          firstUsefulValue(item.durationSeconds, item.duration, item.lengthSeconds)
+        )
+      };
+    })
+    .filter(Boolean);
+
+  const legacyUrl = firstUsefulValue(
     data.audioUrl,
     data.audio?.url,
     data.audio?.downloadUrl
   );
 
-  if (audioUrl) {
-    if (paragraph) {
-      paragraph.textContent = "Secure emergency audio is available below.";
+  if (legacyUrl && !recordings.some((item) => item.url === legacyUrl)) {
+    recordings.push({
+      url: legacyUrl,
+      createdAt: firstUsefulValue(
+        data.audio?.updatedAt,
+        data.audioUploadedAt,
+        data.createdAt
+      ),
+      sequence: recordings.length + 1,
+      durationSeconds: Number(
+        firstUsefulValue(data.audio?.durationSeconds, data.audioDurationSeconds)
+      )
+    });
+  }
+
+  return recordings.sort((left, right) => {
+    const leftDate = toDateSafe(left.createdAt)?.getTime() || 0;
+    const rightDate = toDateSafe(right.createdAt)?.getTime() || 0;
+    if (leftDate !== rightDate) return rightDate - leftDate;
+    return (right.sequence || 0) - (left.sequence || 0);
+  });
+}
+
+function renderAudio(data) {
+  const list = document.getElementById("audioUpdatesList");
+  const summary = document.getElementById("audioUpdatesSummary");
+  if (!list) return;
+
+  const recordings = normalizeAudioRecordings(data);
+  list.replaceChildren();
+
+  if (!recordings.length) {
+    if (summary) {
+      summary.textContent = "No emergency recording has arrived yet. This page updates automatically.";
     }
 
-    if (oldAction) oldAction.remove();
-    card.appendChild(createPremiumAudioPlayer(audioUrl));
+    const empty = document.createElement("div");
+    empty.className = "audio-updates-empty";
+    empty.textContent = "Waiting for the first secure audio update...";
+    list.appendChild(empty);
     return;
   }
 
-  if (paragraph) {
-    paragraph.textContent = "Audio evidence is not available yet.";
+  if (summary) {
+    summary.textContent = `${recordings.length} secure emergency recording${recordings.length === 1 ? "" : "s"} available. New recordings appear automatically.`;
   }
 
-  if (oldAction) oldAction.remove();
+  recordings.forEach((recording, index) => {
+    const item = document.createElement("section");
+    item.className = "audio-update-item";
+
+    const meta = document.createElement("div");
+    meta.className = "audio-update-meta";
+
+    const title = document.createElement("strong");
+    title.textContent = `Emergency Recording ${recordings.length - index}`;
+
+    const details = document.createElement("span");
+    const duration = Number.isFinite(recording.durationSeconds) && recording.durationSeconds > 0
+      ? `${Math.round(recording.durationSeconds)} sec`
+      : "Secure audio";
+    const time = recording.createdAt ? formatTimestamp(recording.createdAt) : "Time pending";
+    details.textContent = `${time} • ${duration}`;
+
+    meta.append(title, details);
+    item.append(meta, createPremiumAudioPlayer(recording.url));
+    list.appendChild(item);
+  });
 }
 
 async function resolvePhotoUrl(dataUrl, incidentId, filename) {
@@ -1410,31 +1510,19 @@ function getTimelineEvents(data) {
     });
   }
 
-  const hasPhotos =
-    data.storageStatus === "photos_upload_done" ||
-    firstUsefulValue(data.frontPhotoUrl, data.backPhotoUrl) !== undefined;
+  const audioRecordings = normalizeAudioRecordings(data);
 
-  if (hasPhotos) {
-    events.push({
-      title: "Camera evidence uploaded",
-      description: "Available emergency photos were secured.",
-      timestamp: firstUsefulValue(data.photosUploadedAt, data.storageUpdatedAt, createdAt),
-      state: "complete"
+  audioRecordings
+    .slice()
+    .reverse()
+    .forEach((recording, index) => {
+      events.push({
+        title: `Audio update ${index + 1} uploaded`,
+        description: "A secure emergency recording is ready for review.",
+        timestamp: recording.createdAt || createdAt,
+        state: "complete"
+      });
     });
-  }
-
-  const hasAudio =
-    data.audioStatus === "audio_upload_done" ||
-    firstUsefulValue(data.audioUrl, data.audio?.url) !== undefined;
-
-  if (hasAudio) {
-    events.push({
-      title: "Audio evidence uploaded",
-      description: "Emergency recording is ready for review.",
-      timestamp: firstUsefulValue(data.audio?.updatedAt, data.audioUploadedAt, createdAt),
-      state: "complete"
-    });
-  }
 
   if (latitude !== undefined && longitude !== undefined) {
     events.push({
@@ -1479,6 +1567,29 @@ function renderTimeline(data) {
   });
 }
 
+function hasVisibleCameraEvidence(data) {
+  const directPhotoUrl = firstUsefulValue(
+    data.frontPhotoUrl,
+    data.backPhotoUrl,
+    data.photos?.front?.url,
+    data.photos?.back?.url
+  );
+
+  const cameraState = String(
+    firstUsefulValue(data.cameraEvidence, data.cameraStatus, "")
+  ).toLowerCase();
+
+  return Boolean(directPhotoUrl) || [
+    "captured",
+    "uploaded",
+    "available",
+    "complete",
+    "completed",
+    "ready"
+  ].includes(cameraState);
+}
+
+
 function renderIncident(data, incidentId) {
   currentIncidentData = data;
   setText("incidentId", data.incidentId || incidentId);
@@ -1505,17 +1616,25 @@ function renderIncident(data, incidentId) {
   renderSeverity(data);
   renderLocation(data);
   renderAudio(data);
-  renderCamera(data, incidentId);
   renderDeviceStatus(data);
   renderTimeline(data);
+
+  const cameraCard = findCardByHeading("Camera Evidence");
+  const showCameraEvidence = hasVisibleCameraEvidence(data);
+
+  if (cameraCard) {
+    cameraCard.hidden = !showCameraEvidence;
+  }
+
+  if (showCameraEvidence) {
+    renderCamera(data, incidentId);
+  }
 }
 
 function showError(message) {
   setText("incidentStatus", message);
   setText("incidentTime", "Unavailable");
 }
-
-initializeGalleryControls();
 
 const incidentId = getIncidentId();
 setText("incidentId", incidentId || "Missing");
