@@ -420,6 +420,42 @@
     }
 
 
+    .audio-updates-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 16px;
+    }
+
+    .audio-update-item {
+      position: relative;
+    }
+
+    .audio-update-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 2px 8px;
+      color: rgba(218, 233, 245, 0.68);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .audio-update-meta strong {
+      color: #f2f8ff;
+      font-size: 12px;
+    }
+
+    .audio-updates-empty {
+      padding: 16px;
+      border: 1px dashed rgba(125, 211, 252, 0.22);
+      border-radius: 16px;
+      background: rgba(7, 22, 41, 0.38);
+      color: rgba(218, 233, 245, 0.68);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
     .timeline-heading-row {
       display: flex;
       align-items: flex-end;
@@ -727,6 +763,17 @@
 
       .location-card {
         padding-bottom: 18px;
+      }
+
+      .audio-updates-list {
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .audio-update-meta {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 3px;
       }
 
       .premium-audio-player {
@@ -1251,19 +1298,11 @@
         </div>
       </article>
 
-      <article class="incident-card">
+      <article class="incident-card audio-updates-card">
         <div class="incident-icon">🎤</div>
-        <h3>Audio Evidence</h3>
-        <p>Loading audio evidence...</p>
-        <button class="incident-action disabled" type="button">Loading Audio</button>
-      </article>
-
-      <article class="incident-card">
-        <div class="incident-icon">📷</div>
-        <h3>Camera Evidence</h3>
-        <p>Loading camera evidence...</p>
-        <button class="incident-action disabled" type="button">Loading Photos</button>
-        <div id="cameraGallery" class="camera-gallery"></div>
+        <h3>Live Audio Updates</h3>
+        <p id="audioUpdatesSummary">Waiting for the first secure emergency recording...</p>
+        <div id="audioUpdatesList" class="audio-updates-list" aria-live="polite"></div>
       </article>
 
       <article class="incident-card">
