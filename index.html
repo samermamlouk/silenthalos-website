@@ -5,81 +5,146 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SilentHalos – Personal Safety App</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    .landing-shell {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    .landing-logo {
+      width: 96px;
+      height: 96px;
+      border-radius: 28px;
+      margin-bottom: 28px;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .landing-title {
+      font-size: clamp(36px, 8vw, 64px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      color: #f1f7ff;
+      margin: 0 0 16px;
+    }
+
+    .landing-subtitle {
+      font-size: clamp(16px, 3vw, 20px);
+      color: rgba(218, 233, 245, 0.72);
+      max-width: 520px;
+      line-height: 1.6;
+      margin: 0 auto 40px;
+    }
+
+    .landing-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 999px;
+      background: rgba(56, 189, 248, 0.08);
+      color: #38BDF8;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      margin-bottom: 48px;
+    }
+
+    .landing-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto 48px;
+    }
+
+    .landing-feature {
+      padding: 24px 20px;
+      border: 1px solid rgba(30, 45, 66, 0.9);
+      border-radius: 20px;
+      background: rgba(11, 22, 40, 0.7);
+      text-align: left;
+    }
+
+    .landing-feature-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .landing-feature h3 {
+      color: #f1f7ff;
+      font-size: 16px;
+      font-weight: 700;
+      margin: 0 0 6px;
+    }
+
+    .landing-feature p {
+      color: rgba(218, 233, 245, 0.65);
+      font-size: 13px;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .landing-footer-note {
+      color: rgba(218, 233, 245, 0.45);
+      font-size: 13px;
+    }
+  </style>
 </head>
-<body>
-  <header class="nav">
-    <div class="brand">
-      <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos logo" class="brand-logo" />
+<body class="incident-body">
+
+  <header class="site-header">
+    <div class="site-brand">
+      <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos" class="brand-logo" />
       <span>SilentHalos</span>
     </div>
-    <a href="#waitlist" class="nav-btn">Join Waitlist</a>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-text">
-        <p class="eyebrow">Personal safety, silent protection</p>
-        <h1>Protection when you can’t call for help.</h1>
-        <p class="subtitle">
-          SilentHalos helps users alert trusted contacts, share live location, and collect evidence during emergencies, accidents, or dangerous situations.
-        </p>
-        <div class="hero-actions">
-          <a href="prototype.html" class="primary">View App Prototype</a>
-          <a href="#features" class="secondary">Explore Features</a>
-        </div>
-      </div>
-      <div class="phone">
-        <div class="phone-screen">
-          <div class="app-top">
-            <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos logo" style="width:40px;height:40px;border-radius:10px;object-fit:cover;">
-            <p>SilentHalos Active</p>
-          </div>
-          <button class="sos">SOS</button>
-          <p class="hint">Shake phone 3 times to activate emergency mode</p>
-          <div class="quick-grid">
-            <span>Safe Circle</span>
-            <span>Drive Mode</span>
-            <span>History</span>
-            <span>Settings</span>
-          </div>
-        </div>
-      </div>
-    </section>
+  <main class="landing-shell">
 
-    <section id="features" class="features">
-      <h2>Core MVP Features</h2>
-      <div class="cards">
-        <div class="card"><h3>Emergency SOS</h3><p>Activate by button, phone shake, or emergency shortcut.</p></div>
-        <div class="card"><h3>Safe Circle</h3><p>Alert up to 5 trusted contacts with location and emergency status.</p></div>
-        <div class="card"><h3>Evidence Mode</h3><p>Record audio/video and store incident details with GPS and timestamp.</p></div>
-        <div class="card"><h3>Silent Mode</h3><p>Emergency actions can run discreetly without loud alerts.</p></div>
-        <div class="card"><h3>Drive Mode</h3><p>Mounted phone can save the last 30 seconds before an accident.</p></div>
-        <div class="card"><h3>Incident History</h3><p>Keep a clear timeline of emergency events and saved evidence.</p></div>
-      </div>
-    </section>
+    <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos" class="landing-logo" />
 
-    <section class="flow">
-      <h2>How It Works</h2>
-      <div class="steps">
-        <div><strong>1</strong><p>User activates protection.</p></div>
-        <div><strong>2</strong><p>SilentHalos captures location and evidence.</p></div>
-        <div><strong>3</strong><p>Trusted contacts receive emergency alert.</p></div>
-      </div>
-    </section>
+    <div class="landing-badge">
+      🛡️ &nbsp;Personal Safety Platform
+    </div>
 
-    <section id="waitlist" class="waitlist">
-      <h2>Join the SilentHalos waitlist</h2>
-      <p>Be among the first to know when SilentHalos launches. Join the early access waitlist.</p>
-<form action="https://formspree.io/f/xojzeqld" method="POST">
-  <input type="hidden" name="_subject" value="SilentHalos Waitlist" />
-  <input type="text" name="name" placeholder="Your name" required />
-  <input type="email" name="email" placeholder="Your email address" required />
-<button type="submit">Join Waitlist</button>
-    </form>
+    <h1 class="landing-title">SilentHalos</h1>
+    <p class="landing-subtitle">
+      The emergency safety app that silently protects you. One press triggers an emergency alert — sharing your live location, recording audio evidence, and capturing photos automatically.
+    </p>
+
+    <div class="landing-features">
+      <div class="landing-feature">
+        <div class="landing-feature-icon">📍</div>
+        <h3>Live Location Sharing</h3>
+        <p>Your real-time GPS location is shared with trusted contacts the moment an emergency is triggered.</p>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">🎤</div>
+        <h3>Audio Evidence</h3>
+        <p>Continuous audio recordings are securely uploaded to the cloud during an active emergency.</p>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">📷</div>
+        <h3>Camera Evidence</h3>
+        <p>Front and rear camera photos are captured and stored as secure evidence automatically.</p>
+      </div>
+      <div class="landing-feature">
+        <div class="landing-feature-icon">🔔</div>
+        <h3>Silent Alerts</h3>
+        <p>Trigger an emergency discreetly — without unlocking your phone or drawing attention.</p>
+      </div>
+    </div>
+
+    <p class="landing-footer-note">© 2026 SilentHalos. All evidence is end-to-end secured.</p>
+
   </main>
 
-  <footer>
-    <p>© SilentHalos. Concept prototype v1.0</p>
-  </footer>
 </body>
 </html>

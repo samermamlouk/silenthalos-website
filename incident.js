@@ -1636,6 +1636,8 @@ function showError(message) {
   setText("incidentTime", "Unavailable");
 }
 
+initializeGalleryControls();
+
 const incidentId = getIncidentId();
 setText("incidentId", incidentId || "Missing");
 

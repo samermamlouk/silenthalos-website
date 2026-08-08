@@ -8,6 +8,7 @@
   <script type="module" src="incident.js"></script>
 
   <style>
+    /* ── Camera gallery ───────────────────────────────────────────── */
     .camera-gallery {
       display: grid;
       gap: 14px;
@@ -26,14 +27,14 @@
       border: 0;
       padding: 0;
       border-radius: 16px;
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(11, 22, 40, 0.6);
       cursor: pointer;
       aspect-ratio: 4 / 3;
       outline: none;
     }
 
     .camera-gallery-item:focus-visible {
-      box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.65);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.65);
     }
 
     .camera-gallery-item img {
@@ -63,6 +64,7 @@
       backdrop-filter: blur(8px);
     }
 
+    /* ── Gallery modal ────────────────────────────────────────────── */
     .gallery-modal {
       position: fixed;
       inset: 0;
@@ -70,7 +72,7 @@
       display: none;
       align-items: center;
       justify-content: center;
-      background: rgba(0, 0, 0, 0.95);
+      background: rgba(0, 0, 0, 0.96);
       padding: 18px;
     }
 
@@ -87,7 +89,7 @@
       justify-content: center;
       overflow: hidden;
       border-radius: 20px;
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(7, 21, 42, 0.4);
       touch-action: none;
     }
 
@@ -116,19 +118,23 @@
     .gallery-control {
       position: absolute;
       z-index: 3;
-      border: 0;
+      border: 1px solid rgba(30, 45, 66, 0.9);
       border-radius: 999px;
       width: 46px;
       height: 46px;
-      background: rgba(0, 0, 0, 0.62);
+      background: rgba(7, 21, 42, 0.82);
       color: white;
       cursor: pointer;
       font-size: 24px;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .gallery-control:hover {
-      background: rgba(0, 0, 0, 0.82);
+      background: rgba(7, 21, 42, 0.96);
+      border-color: rgba(56, 189, 248, 0.35);
     }
 
     .gallery-close {
@@ -156,7 +162,8 @@
       transform: translateX(-50%);
       padding: 7px 12px;
       border-radius: 999px;
-      background: rgba(0, 0, 0, 0.68);
+      background: rgba(7, 21, 42, 0.82);
+      border: 1px solid rgba(30, 45, 66, 0.9);
       color: white;
       font-size: 13px;
       font-weight: 700;
@@ -170,11 +177,12 @@
       left: 16px;
       color: rgba(255, 255, 255, 0.86);
       font-size: 12px;
-      background: rgba(0, 0, 0, 0.52);
+      background: rgba(7, 21, 42, 0.7);
       padding: 7px 10px;
       border-radius: 999px;
       backdrop-filter: blur(8px);
       pointer-events: none;
+      border: 1px solid rgba(30, 45, 66, 0.7);
     }
 
     .gallery-reset {
@@ -182,11 +190,11 @@
       z-index: 3;
       right: 72px;
       top: 14px;
-      border: 0;
+      border: 1px solid rgba(30, 45, 66, 0.9);
       border-radius: 999px;
       min-height: 42px;
       padding: 0 14px;
-      background: rgba(0, 0, 0, 0.62);
+      background: rgba(7, 21, 42, 0.82);
       color: white;
       cursor: pointer;
       font-size: 13px;
@@ -194,6 +202,7 @@
       backdrop-filter: blur(8px);
     }
 
+    /* ── Map live meta ────────────────────────────────────────────── */
     .map-live-meta {
       display: flex;
       flex-wrap: wrap;
@@ -206,9 +215,9 @@
       align-items: center;
       min-height: 30px;
       padding: 6px 10px;
-      border: 1px solid rgba(125, 211, 252, 0.18);
+      border: 1px solid rgba(30, 45, 66, 0.9);
       border-radius: 999px;
-      background: rgba(7, 22, 41, 0.62);
+      background: rgba(11, 22, 40, 0.7);
       color: rgba(231, 245, 255, 0.82);
       font-size: 12px;
       font-weight: 700;
@@ -217,9 +226,9 @@
     }
 
     .map-live-meta .map-live-badge {
-      color: #7dffba;
-      border-color: rgba(70, 255, 167, 0.28);
-      background: rgba(5, 52, 38, 0.5);
+      color: #4ADE80;
+      border-color: rgba(34, 197, 94, 0.32);
+      background: rgba(5, 46, 22, 0.55);
     }
 
     .map-live-dot {
@@ -227,17 +236,18 @@
       height: 8px;
       margin-right: 7px;
       border-radius: 50%;
-      background: #43ff9f;
-      box-shadow: 0 0 0 0 rgba(67, 255, 159, 0.55);
+      background: #22C55E;
+      box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55);
       animation: silenthalos-live-dot 1.5s ease-out infinite;
     }
 
     @keyframes silenthalos-live-dot {
-      0% { box-shadow: 0 0 0 0 rgba(67, 255, 159, 0.55); }
-      70% { box-shadow: 0 0 0 8px rgba(67, 255, 159, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(67, 255, 159, 0); }
+      0%   { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.55); }
+      70%  { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
     }
 
+    /* ── Incident map ─────────────────────────────────────────────── */
     .incident-map {
       position: relative;
       width: 100%;
@@ -245,10 +255,10 @@
       margin-top: 16px;
       overflow: hidden;
       border-radius: 18px;
-      border: 1px solid rgba(79, 195, 247, 0.28);
+      border: 1px solid rgba(56, 189, 248, 0.22);
       background:
-        radial-gradient(circle at 50% 50%, rgba(79, 195, 247, 0.12), transparent 58%),
-        linear-gradient(135deg, rgba(79, 195, 247, 0.08), rgba(255, 255, 255, 0.03));
+        radial-gradient(circle at 50% 50%, rgba(56, 189, 248, 0.1), transparent 58%),
+        linear-gradient(135deg, rgba(56, 189, 248, 0.06), rgba(255, 255, 255, 0.02));
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.04),
         0 18px 42px rgba(0, 0, 0, 0.24);
@@ -267,7 +277,7 @@
       inset: 0;
       pointer-events: none;
       border-radius: inherit;
-      box-shadow: inset 0 0 40px rgba(0, 119, 255, 0.08);
+      box-shadow: inset 0 0 40px rgba(14, 165, 233, 0.06);
       z-index: 5;
     }
 
@@ -281,11 +291,11 @@
       height: 34px;
       transform: translate(-50%, -50%);
       border-radius: 50%;
-      background: rgba(79, 195, 247, 0.22);
-      border: 2px solid rgba(151, 231, 255, 0.88);
+      background: rgba(56, 189, 248, 0.22);
+      border: 2px solid rgba(125, 211, 252, 0.88);
       box-shadow:
-        0 0 0 0 rgba(79, 195, 247, 0.52),
-        0 0 28px rgba(0, 153, 255, 0.72);
+        0 0 0 0 rgba(56, 189, 248, 0.52),
+        0 0 28px rgba(14, 165, 233, 0.72);
       animation: silenthalos-location-pulse 1.8s ease-out infinite;
       pointer-events: none;
     }
@@ -295,59 +305,57 @@
         transform: translate(-50%, -50%) scale(0.72);
         opacity: 1;
         box-shadow:
-          0 0 0 0 rgba(79, 195, 247, 0.58),
-          0 0 24px rgba(0, 153, 255, 0.7);
+          0 0 0 0 rgba(56, 189, 248, 0.58),
+          0 0 24px rgba(14, 165, 233, 0.7);
       }
-
       70% {
         transform: translate(-50%, -50%) scale(1.08);
         opacity: 0.68;
         box-shadow:
-          0 0 0 24px rgba(79, 195, 247, 0),
-          0 0 34px rgba(0, 153, 255, 0.55);
+          0 0 0 24px rgba(56, 189, 248, 0),
+          0 0 34px rgba(14, 165, 233, 0.55);
       }
-
       100% {
         transform: translate(-50%, -50%) scale(0.72);
         opacity: 0;
         box-shadow:
-          0 0 0 30px rgba(79, 195, 247, 0),
-          0 0 38px rgba(0, 153, 255, 0.25);
+          0 0 0 30px rgba(56, 189, 248, 0),
+          0 0 38px rgba(14, 165, 233, 0.25);
       }
     }
 
-
     .map-live-badge.stale {
-      color: #ffd479;
-      border-color: rgba(255, 196, 92, 0.34);
-      background: rgba(72, 48, 7, 0.52);
+      color: #FCD34D;
+      border-color: rgba(245, 158, 11, 0.34);
+      background: rgba(60, 40, 5, 0.55);
     }
 
     .map-live-badge.stale .map-live-dot {
-      background: #ffc45c;
+      background: #F59E0B;
       animation: silenthalos-live-dot 2.2s ease-out infinite;
     }
 
     .map-live-badge.offline {
-      color: #ff9aa7;
-      border-color: rgba(255, 102, 122, 0.34);
-      background: rgba(73, 15, 28, 0.52);
+      color: #FCA5A5;
+      border-color: rgba(239, 68, 68, 0.34);
+      background: rgba(60, 10, 10, 0.55);
     }
 
     .map-live-badge.offline .map-live-dot {
-      background: #ff667a;
+      background: #EF4444;
       animation: none;
       box-shadow: none;
     }
 
+    /* ── Premium audio player ─────────────────────────────────────── */
     .premium-audio-player {
       margin-top: 16px;
       padding: 16px;
-      border: 1px solid rgba(125, 211, 252, 0.2);
+      border: 1px solid rgba(56, 189, 248, 0.18);
       border-radius: 18px;
       background:
-        radial-gradient(circle at 15% 0%, rgba(79, 195, 247, 0.16), transparent 42%),
-        rgba(7, 22, 41, 0.72);
+        radial-gradient(circle at 15% 0%, rgba(56, 189, 248, 0.12), transparent 42%),
+        rgba(11, 22, 40, 0.85);
       box-shadow: 0 16px 36px rgba(0, 0, 0, 0.22);
     }
 
@@ -374,7 +382,8 @@
       height: 38px;
       place-items: center;
       border-radius: 12px;
-      background: rgba(79, 195, 247, 0.14);
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.18);
     }
 
     .premium-audio-title-group div {
@@ -412,13 +421,12 @@
       height: 40px;
       place-items: center;
       padding: 0;
-      border: 1px solid rgba(125, 211, 252, 0.28);
+      border: 1px solid rgba(56, 189, 248, 0.32);
       border-radius: 50%;
-      background: linear-gradient(135deg, #34c8ff, #087cff);
+      background: linear-gradient(135deg, #38BDF8, #0EA5E9);
       color: #fff;
       cursor: pointer;
     }
-
 
     .audio-updates-list {
       display: grid;
@@ -448,14 +456,15 @@
 
     .audio-updates-empty {
       padding: 16px;
-      border: 1px dashed rgba(125, 211, 252, 0.22);
+      border: 1px dashed rgba(56, 189, 248, 0.2);
       border-radius: 16px;
-      background: rgba(7, 22, 41, 0.38);
+      background: rgba(11, 22, 40, 0.5);
       color: rgba(218, 233, 245, 0.68);
       font-size: 13px;
       line-height: 1.5;
     }
 
+    /* ── Timeline section ─────────────────────────────────────────── */
     .timeline-heading-row {
       display: flex;
       align-items: flex-end;
@@ -470,7 +479,7 @@
 
     .timeline-eyebrow {
       margin: 0 0 6px;
-      color: #61d5ff;
+      color: #38BDF8;
       font-size: 11px;
       font-weight: 800;
       letter-spacing: 0.18em;
@@ -481,10 +490,10 @@
       align-items: center;
       gap: 8px;
       padding: 8px 12px;
-      border: 1px solid rgba(67, 255, 159, 0.2);
+      border: 1px solid rgba(34, 197, 94, 0.22);
       border-radius: 999px;
-      background: rgba(5, 52, 38, 0.42);
-      color: #7dffba;
+      background: rgba(5, 46, 22, 0.45);
+      color: #4ADE80;
       font-size: 11px;
       font-weight: 700;
     }
@@ -493,7 +502,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #43ff9f;
+      background: #22C55E;
       animation: silenthalos-live-dot 1.5s ease-out infinite;
     }
 
@@ -509,7 +518,7 @@
       bottom: 14px;
       left: 11px;
       width: 2px;
-      background: linear-gradient(to bottom, rgba(79, 195, 247, 0.8), rgba(79, 195, 247, 0.08));
+      background: linear-gradient(to bottom, rgba(56, 189, 248, 0.8), rgba(56, 189, 248, 0.06));
     }
 
     .premium-timeline-item {
@@ -531,18 +540,18 @@
       width: 14px;
       height: 14px;
       margin: 5px 0 0 5px;
-      border: 3px solid #07111f;
+      border: 3px solid #07152A;
       border-radius: 50%;
-      background: #4fc3f7;
-      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.35);
+      background: #38BDF8;
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.35);
     }
 
     .premium-timeline-item.critical .premium-timeline-marker {
-      background: #ff6478;
+      background: #EF4444;
     }
 
     .premium-timeline-item.complete .premium-timeline-marker {
-      background: #43ff9f;
+      background: #22C55E;
     }
 
     .premium-timeline-item.live .premium-timeline-marker {
@@ -571,6 +580,7 @@
       white-space: nowrap;
     }
 
+    /* ── Breathe animation ────────────────────────────────────────── */
     .incident-card,
     .incident-timeline,
     .incident-hero {
@@ -578,47 +588,257 @@
     }
 
     @keyframes silenthalos-breathe {
-      0%, 100% { box-shadow: 0 0 0 rgba(79, 195, 247, 0); }
-      50% { box-shadow: 0 0 26px rgba(79, 195, 247, 0.035); }
+      0%, 100% { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18); }
+      50%       { box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18), 0 0 28px rgba(56, 189, 248, 0.04); }
     }
 
-    @media (max-width: 700px) {
-      .camera-gallery-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .incident-map {
-        min-height: 320px;
-      }
-
-      .timeline-heading-row {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .premium-timeline-item {
-        grid-template-columns: 24px minmax(0, 1fr);
-      }
-
-      .premium-timeline-item time {
-        grid-column: 2;
-      }
-
-      .gallery-modal {
-        padding: 0;
-      }
-
-      .gallery-modal-content {
-        width: 100%;
-        height: 100vh;
-        border-radius: 0;
-      }
-
-      .gallery-zoom-hint {
-        max-width: 55vw;
-      }
+    /* ── Severity panel ───────────────────────────────────────────── */
+    .severity-panel {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 22px;
+      padding: 14px 16px;
+      border: 1px solid rgba(239, 68, 68, 0.22);
+      border-radius: 18px;
+      background: rgba(239, 68, 68, 0.06);
     }
-  
+
+    .severity-panel > div {
+      display: grid;
+      gap: 3px;
+    }
+
+    .severity-panel small {
+      color: rgba(218, 233, 245, 0.62);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .severity-panel strong {
+      color: #f2f8ff;
+      font-size: 14px;
+    }
+
+    .severity-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 104px;
+      justify-content: center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+    }
+
+    .severity-badge.critical {
+      color: #fff;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.58);
+    }
+
+    .severity-badge.high {
+      color: #FCA5A5;
+      background: rgba(239, 68, 68, 0.14);
+      border: 1px solid rgba(239, 68, 68, 0.38);
+    }
+
+    .severity-badge.medium {
+      color: #FDE68A;
+      background: rgba(245, 158, 11, 0.14);
+      border: 1px solid rgba(245, 158, 11, 0.38);
+    }
+
+    .severity-badge.low {
+      color: #BBF7D0;
+      background: rgba(34, 197, 94, 0.12);
+      border: 1px solid rgba(34, 197, 94, 0.32);
+    }
+
+    .severity-pulse {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: currentColor;
+      box-shadow: 0 0 0 0 currentColor;
+      animation: severity-pulse 1.7s ease-out infinite;
+    }
+
+    @keyframes severity-pulse {
+      0%   { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.45); }
+      70%  { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+    }
+
+    /* ── Battery ──────────────────────────────────────────────────── */
+    .battery-level {
+      height: 8px;
+      margin-top: 16px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.07);
+    }
+
+    .battery-level-fill {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #22C55E, #38BDF8);
+      transition: width 500ms ease;
+    }
+
+    .battery-level-fill.warning {
+      background: linear-gradient(90deg, #F59E0B, #FCD34D);
+    }
+
+    .battery-level-fill.critical {
+      background: linear-gradient(90deg, #EF4444, #F87171);
+    }
+
+    /* ── Telemetry grid ───────────────────────────────────────────── */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .telemetry-grid > div {
+      display: grid;
+      gap: 4px;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid rgba(30, 45, 66, 0.9);
+      border-radius: 14px;
+      background: rgba(11, 22, 40, 0.6);
+    }
+
+    .telemetry-grid small {
+      color: rgba(148, 163, 184, 0.8);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    .telemetry-grid strong {
+      color: #eef8ff;
+      font-size: 13px;
+      overflow-wrap: anywhere;
+    }
+
+    /* ── Premium waveform seek ────────────────────────────────────── */
+    .premium-waveform-seek {
+      position: relative;
+      width: 100%;
+      height: 84px;
+      margin-top: 10px;
+      overflow: hidden;
+      border-radius: 12px;
+      cursor: pointer;
+      touch-action: none;
+      outline: none;
+    }
+
+    .premium-waveform-seek:focus-visible {
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.65);
+    }
+
+    .premium-audio-waveform {
+      position: absolute;
+      inset: 0;
+      display: block;
+      width: 100%;
+      height: 84px;
+      margin: 0;
+      pointer-events: none;
+    }
+
+    .waveform-base {
+      opacity: 0.38;
+      filter: saturate(0.75);
+    }
+
+    .waveform-active-layer {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .waveform-active {
+      width: 100%;
+      min-width: 100%;
+      opacity: 1;
+      filter: brightness(1.5) saturate(1.35);
+    }
+
+    .waveform-playhead {
+      position: absolute;
+      top: 8px;
+      bottom: 8px;
+      left: 0;
+      width: 2px;
+      border-radius: 999px;
+      background: #38BDF8;
+      box-shadow:
+        0 0 0 1px rgba(56, 189, 248, 0.2),
+        0 0 14px rgba(56, 189, 248, 0.9);
+      transform: translateX(-1px);
+      pointer-events: none;
+    }
+
+    .waveform-playhead::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #38BDF8;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.8);
+      transform: translate(-50%, -50%);
+    }
+
+    .waveform-playhead.at-start {
+      transform: translateX(0);
+    }
+
+    .waveform-playhead.at-start::after {
+      left: 0;
+      transform: translate(0, -50%);
+    }
+
+    .waveform-playhead.at-end {
+      transform: translateX(-2px);
+    }
+
+    .waveform-playhead.at-end::after {
+      left: auto;
+      right: 0;
+      transform: translate(0, -50%);
+    }
+
+    .premium-audio-remaining {
+      margin-left: auto;
+      color: rgba(220, 236, 248, 0.58);
+      font-size: 11px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .premium-audio-time {
+      min-width: 34px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Responsive: 700px ────────────────────────────────────────── */
     @media (max-width: 700px) {
       body {
         overflow-x: hidden;
@@ -633,64 +853,63 @@
       }
 
       .site-brand img {
-        width: 48px;
-        height: 48px;
+        width: 36px;
+        height: 36px;
       }
 
       .site-brand span {
-        font-size: 24px;
+        font-size: 20px;
       }
 
       .about-link {
-        padding: 10px 14px;
+        padding: 9px 13px;
         font-size: 13px;
-        line-height: 1.2;
       }
 
       .page-shell {
         width: min(100%, 100%);
-        padding: 18px 12px 36px;
+        padding: 16px 12px 40px;
       }
 
       .incident-hero {
-        padding: 24px 18px;
+        padding: 22px 18px;
         border-radius: 22px;
       }
 
       .incident-hero .eyebrow {
         font-size: 11px;
-        letter-spacing: 0.15em;
+        letter-spacing: 0.14em;
       }
 
       .incident-hero h1 {
         max-width: 100%;
-        font-size: clamp(34px, 10vw, 48px);
+        font-size: clamp(32px, 10vw, 46px);
         line-height: 0.98;
         letter-spacing: -0.04em;
         overflow-wrap: anywhere;
       }
 
       .incident-hero > p {
-        margin-top: 18px;
-        font-size: 16px;
+        margin-top: 14px;
+        font-size: 15px;
         line-height: 1.55;
       }
 
       .incident-summary {
-        gap: 12px;
-        margin-top: 22px;
+        gap: 10px;
+        margin-top: 20px;
       }
 
       .incident-id-card {
         width: 100%;
         min-width: 0;
-        padding: 16px;
+        padding: 14px 16px;
       }
 
       #incidentId {
         display: block;
         max-width: 100%;
-        font-size: clamp(22px, 7vw, 32px);
+        font-size: clamp(20px, 7vw, 28px);
         line-height: 1.05;
         overflow-wrap: anywhere;
         word-break: break-word;
@@ -698,17 +917,18 @@
 
       .incident-meta-grid {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 8px;
+        width: 100%;
       }
 
       .incident-meta-card {
-        padding: 14px 16px;
+        padding: 12px 14px;
       }
 
       .incident-grid {
         grid-template-columns: 1fr;
-        gap: 14px;
-        margin-top: 16px;
+        gap: 12px;
+        margin-top: 12px;
       }
 
       .incident-card {
@@ -718,30 +938,29 @@
       }
 
       .incident-icon {
-        width: 52px;
-        height: 52px;
-        font-size: 24px;
+        width: 50px;
+        height: 50px;
+        font-size: 23px;
       }
 
       .incident-card h3 {
-        margin-top: 14px;
-        font-size: 24px;
+        margin-top: 12px;
+        font-size: 20px;
         line-height: 1.1;
       }
 
       .incident-card p {
-        margin-top: 12px;
-        font-size: 15px;
+        margin-top: 10px;
+        font-size: 14px;
         line-height: 1.5;
         overflow-wrap: anywhere;
       }
 
-      .incident-card .action-button,
-      .incident-card a.action-button {
+      .incident-card .action-button {
         width: auto;
-        min-height: 44px;
-        padding: 10px 16px;
-        font-size: 14px;
+        min-height: 42px;
+        padding: 9px 14px;
+        font-size: 13px;
       }
 
       .map-live-meta {
@@ -751,7 +970,7 @@
 
       .map-live-meta > span {
         min-height: 28px;
-        padding: 6px 9px;
+        padding: 5px 8px;
         font-size: 11px;
       }
 
@@ -759,10 +978,6 @@
         min-height: 260px !important;
         margin-top: 12px;
         border-radius: 16px;
-      }
-
-      .location-card {
-        padding-bottom: 18px;
       }
 
       .audio-updates-list {
@@ -836,18 +1051,20 @@
 
       .premium-timeline-panel,
       .incident-timeline {
-        margin-top: 16px;
-        padding: 20px 18px;
+        margin-top: 12px;
+        padding: 18px 16px;
         border-radius: 22px;
       }
 
       .timeline-heading-row {
+        align-items: flex-start;
+        flex-direction: column;
         gap: 10px;
         margin-bottom: 18px;
       }
 
       .timeline-heading-row h2 {
-        font-size: 30px;
+        font-size: 28px;
         line-height: 1;
       }
 
@@ -885,28 +1102,80 @@
         font-size: 10px;
       }
 
-      footer {
-        padding: 18px 14px 26px;
-        font-size: 12px;
+      .gallery-modal {
+        padding: 0;
+      }
+
+      .gallery-modal-content {
+        width: 100%;
+        height: 100vh;
+        border-radius: 0;
+      }
+
+      .gallery-zoom-hint {
+        max-width: 55vw;
+      }
+
+      .severity-panel {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 18px;
+        padding: 12px 14px;
+      }
+
+      .severity-badge {
+        min-width: 92px;
+        padding: 8px 10px;
+        font-size: 11px;
+      }
+
+      .telemetry-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .telemetry-grid > div {
+        padding: 10px;
+      }
+
+      .premium-waveform-seek,
+      .premium-audio-waveform {
+        height: 62px;
+      }
+
+      .premium-waveform-seek {
+        margin-top: 8px;
+      }
+
+      .waveform-playhead {
+        top: 5px;
+        bottom: 5px;
+      }
+
+      footer .footer-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
       }
     }
 
+    /* ── Responsive: 430px ────────────────────────────────────────── */
     @media (max-width: 430px) {
-      .site-header {
-        align-items: center;
-      }
-
       .site-brand span {
-        font-size: 20px;
+        font-size: 18px;
       }
 
       .about-link {
-        max-width: 132px;
+        max-width: 130px;
         text-align: center;
+        font-size: 12px;
+        line-height: 1.2;
+        padding: 8px 10px;
       }
 
       .incident-hero h1 {
-        font-size: 38px;
+        font-size: 34px;
       }
 
       .camera-gallery-grid {
@@ -933,314 +1202,30 @@
         grid-column: 1 / -1;
       }
     }
-
-
-    .severity-panel {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      margin-top: 22px;
-      padding: 14px 16px;
-      border: 1px solid rgba(255, 100, 120, 0.22);
-      border-radius: 18px;
-      background: rgba(255, 100, 120, 0.06);
-    }
-
-    .severity-panel > div {
-      display: grid;
-      gap: 3px;
-    }
-
-    .severity-panel small {
-      color: rgba(218, 233, 245, 0.62);
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .severity-panel strong {
-      color: #f2f8ff;
-      font-size: 14px;
-    }
-
-    .severity-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      min-width: 104px;
-      justify-content: center;
-      padding: 9px 12px;
-      border-radius: 999px;
-      font-size: 12px;
-      font-weight: 900;
-      letter-spacing: 0.12em;
-    }
-
-    .severity-badge.critical {
-      color: #fff;
-      background: rgba(255, 55, 83, 0.22);
-      border: 1px solid rgba(255, 55, 83, 0.58);
-    }
-
-    .severity-badge.high {
-      color: #ffd9df;
-      background: rgba(255, 100, 120, 0.16);
-      border: 1px solid rgba(255, 100, 120, 0.42);
-    }
-
-    .severity-badge.medium {
-      color: #ffe3a0;
-      background: rgba(255, 184, 77, 0.14);
-      border: 1px solid rgba(255, 184, 77, 0.38);
-    }
-
-    .severity-badge.low {
-      color: #b8ffd7;
-      background: rgba(67, 255, 159, 0.12);
-      border: 1px solid rgba(67, 255, 159, 0.32);
-    }
-
-    .severity-pulse {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      background: currentColor;
-      box-shadow: 0 0 0 0 currentColor;
-      animation: severity-pulse 1.7s ease-out infinite;
-    }
-
-    @keyframes severity-pulse {
-      0% { box-shadow: 0 0 0 0 rgba(255, 100, 120, 0.45); }
-      70% { box-shadow: 0 0 0 8px rgba(255, 100, 120, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(255, 100, 120, 0); }
-    }
-
-    .battery-level {
-      height: 8px;
-      margin-top: 16px;
-      overflow: hidden;
-      border-radius: 999px;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .battery-level-fill {
-      display: block;
-      width: 0;
-      height: 100%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #43ff9f, #4fc3f7);
-      transition: width 500ms ease;
-    }
-
-    .battery-level-fill.warning {
-      background: linear-gradient(90deg, #ffb84d, #ffd479);
-    }
-
-    .battery-level-fill.critical {
-      background: linear-gradient(90deg, #ff3753, #ff7186);
-    }
-
-    .telemetry-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 16px;
-    }
-
-    .telemetry-grid > div {
-      display: grid;
-      gap: 4px;
-      min-width: 0;
-      padding: 12px;
-      border: 1px solid rgba(125, 211, 252, 0.14);
-      border-radius: 14px;
-      background: rgba(7, 22, 41, 0.46);
-    }
-
-    .telemetry-grid small {
-      color: rgba(191, 217, 235, 0.6);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.07em;
-      text-transform: uppercase;
-    }
-
-    .telemetry-grid strong {
-      color: #eef8ff;
-      font-size: 13px;
-      overflow-wrap: anywhere;
-    }
-
-    @media (max-width: 700px) {
-      .severity-panel {
-        align-items: flex-start;
-        flex-direction: column;
-        gap: 10px;
-        margin-top: 18px;
-        padding: 12px 14px;
-      }
-
-      .severity-badge {
-        min-width: 92px;
-        padding: 8px 10px;
-        font-size: 11px;
-      }
-
-      .telemetry-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
-
-      .telemetry-grid > div {
-        padding: 10px;
-      }
-    }
-
-
-    .premium-waveform-seek {
-      position: relative;
-      width: 100%;
-      height: 84px;
-      margin-top: 10px;
-      overflow: hidden;
-      border-radius: 12px;
-      cursor: pointer;
-      touch-action: none;
-      outline: none;
-    }
-
-    .premium-waveform-seek:focus-visible {
-      box-shadow: 0 0 0 2px rgba(79, 195, 247, 0.65);
-    }
-
-    .premium-audio-waveform {
-      position: absolute;
-      inset: 0;
-      display: block;
-      width: 100%;
-      height: 84px;
-      margin: 0;
-      pointer-events: none;
-    }
-
-    .waveform-base {
-      opacity: 0.38;
-      filter: saturate(0.75);
-    }
-
-    .waveform-active-layer {
-      position: absolute;
-      inset: 0 auto 0 0;
-      width: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-
-    .waveform-active {
-      width: 100%;
-      min-width: 100%;
-      opacity: 1;
-      filter: brightness(1.5) saturate(1.35);
-    }
-
-    .waveform-playhead {
-      position: absolute;
-      top: 8px;
-      bottom: 8px;
-      left: 0;
-      width: 2px;
-      border-radius: 999px;
-      background: #71d8ff;
-      box-shadow:
-        0 0 0 1px rgba(113, 216, 255, 0.2),
-        0 0 14px rgba(79, 195, 247, 0.9);
-      transform: translateX(-1px);
-      pointer-events: none;
-    }
-
-    .waveform-playhead::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #71d8ff;
-      box-shadow: 0 0 14px rgba(79, 195, 247, 0.8);
-      transform: translate(-50%, -50%);
-    }
-
-    .waveform-playhead.at-start {
-      transform: translateX(0);
-    }
-
-    .waveform-playhead.at-start::after {
-      left: 0;
-      transform: translate(0, -50%);
-    }
-
-    .waveform-playhead.at-end {
-      transform: translateX(-2px);
-    }
-
-    .waveform-playhead.at-end::after {
-      left: auto;
-      right: 0;
-      transform: translate(0, -50%);
-    }
-
-    .premium-audio-remaining {
-      margin-left: auto;
-      color: rgba(220, 236, 248, 0.58);
-      font-size: 11px;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .premium-audio-time {
-      min-width: 34px;
-      font-variant-numeric: tabular-nums;
-    }
-
-
-
-    @media (max-width: 700px) {
-      .premium-waveform-seek,
-      .premium-audio-waveform {
-        height: 62px;
-      }
-
-      .premium-waveform-seek {
-        margin-top: 8px;
-      }
-
-      .waveform-playhead {
-        top: 5px;
-        bottom: 5px;
-      }
-    }
-
-</style>
+  </style>
 </head>
 
 <body class="incident-body">
-  <header class="nav incident-nav">
-    <div class="brand">
-      <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos logo" class="brand-logo" />
+
+  <!-- ── Header ─────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="site-brand">
+      <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos" class="brand-logo" />
       <span>SilentHalos</span>
     </div>
-    <a href="index.html" class="nav-btn">About SilentHalos</a>
+    <a href="index.html" class="about-link">About SilentHalos</a>
   </header>
 
-  <main class="incident-main">
-    <section class="incident-hero-panel">
-      <p class="eyebrow danger">Emergency incident link</p>
-      <h1>SilentHalos Emergency Alert</h1>
-      <p class="subtitle">
-        This emergency page displays evidence securely synchronized by the SilentHalos safety app.
-      </p>
+  <!-- ── Main content ───────────────────────────────────────────────── -->
+  <main class="page-shell">
 
+    <!-- Hero / alert banner -->
+    <section class="incident-hero">
+      <p class="eyebrow">🔴 &nbsp;Emergency incident link</p>
+      <h1>SilentHalos Emergency Alert</h1>
+      <p>This emergency page displays evidence securely synchronized by the SilentHalos safety app. It updates automatically.</p>
+
+      <!-- Severity -->
       <div class="severity-panel" aria-live="polite">
         <span id="severityBadge" class="severity-badge high">
           <span class="severity-pulse"></span>
@@ -1252,37 +1237,47 @@
         </div>
       </div>
 
-      <div class="incident-id-box">
-        <span>Incident ID</span>
-        <strong id="incidentId">Loading...</strong>
-      </div>
-
-      <div class="incident-status-row">
-        <div>
-          <small>Status</small>
-          <strong id="incidentStatus">Loading incident...</strong>
+      <!-- ID + status row -->
+      <div class="incident-summary">
+        <div class="incident-id-card">
+          <small>Incident ID</small>
+          <strong id="incidentId">Loading...</strong>
         </div>
-        <div>
-          <small>Created</small>
-          <strong id="incidentTime">Loading...</strong>
+        <div class="incident-meta-grid">
+          <div class="incident-meta-card">
+            <small>Status</small>
+            <strong id="incidentStatus">Loading incident...</strong>
+          </div>
+          <div class="incident-meta-card">
+            <small>Created</small>
+            <strong id="incidentTime">Loading...</strong>
+          </div>
         </div>
       </div>
     </section>
 
+    <!-- Evidence cards grid -->
     <section class="incident-grid">
+
+      <!-- Urgent alert card -->
       <article class="incident-card urgent">
         <div class="incident-icon">🚨</div>
         <h2>I need help</h2>
-        <p>This incident was generated by the SilentHalos safety app.</p>
+        <p>This incident was generated by the SilentHalos safety app. The person needs immediate attention.</p>
       </article>
 
-      <article class="incident-card">
+      <!-- Live location card -->
+      <article class="incident-card location-card">
         <div class="incident-icon">📍</div>
         <h3>Live Location</h3>
         <p id="locationText">Loading emergency location...</p>
-        <a id="locationButton" class="incident-action disabled" aria-disabled="true">Open Map</a>
+        <a id="locationButton" class="action-button disabled" aria-disabled="true">Open Map</a>
+
         <div class="map-live-meta" aria-live="polite">
-          <span id="mapLiveBadge" class="map-live-badge live"><span class="map-live-dot"></span><span id="mapLiveLabel">LIVE TRACKING</span></span>
+          <span id="mapLiveBadge" class="map-live-badge live">
+            <span class="map-live-dot"></span>
+            <span id="mapLiveLabel">LIVE TRACKING</span>
+          </span>
           <span id="mapAccuracy">GPS accuracy unavailable</span>
           <span id="mapSpeed">Speed unavailable</span>
           <span id="mapLastUpdate">Waiting for update</span>
@@ -1298,6 +1293,7 @@
         </div>
       </article>
 
+      <!-- Live audio card -->
       <article class="incident-card audio-updates-card">
         <div class="incident-icon">🎤</div>
         <h3>Live Audio Updates</h3>
@@ -1305,6 +1301,7 @@
         <div id="audioUpdatesList" class="audio-updates-list" aria-live="polite"></div>
       </article>
 
+      <!-- Camera evidence card -->
       <article class="incident-card">
         <div class="incident-icon">📷</div>
         <h3>Camera Evidence</h3>
@@ -1312,13 +1309,15 @@
         <div id="cameraGallery" class="camera-gallery" aria-live="polite"></div>
       </article>
 
+      <!-- Drive mode card -->
       <article class="incident-card">
         <div class="incident-icon">🎥</div>
         <h3>Drive Mode Video</h3>
         <p>Video evidence will be available when Drive Mode dashcam is connected.</p>
-        <button class="incident-action disabled" type="button">Coming Soon</button>
+        <button class="action-button disabled" type="button">Coming Soon</button>
       </article>
 
+      <!-- Device telemetry card -->
       <article class="incident-card telemetry-card">
         <div class="incident-icon">🔋</div>
         <h3>Device Telemetry</h3>
@@ -1355,8 +1354,10 @@
           </div>
         </div>
       </article>
+
     </section>
 
+    <!-- Incident timeline -->
     <section class="incident-timeline premium-timeline-panel">
       <div class="timeline-heading-row">
         <div>
@@ -1380,22 +1381,30 @@
         </article>
       </div>
     </section>
+
   </main>
 
+  <!-- ── Footer ─────────────────────────────────────────────────────── -->
   <footer>
-    <p>© SilentHalos. Emergency incident page.</p>
+    <div class="footer-inner">
+      <span class="footer-brand">SilentHalos</span>
+      <span>© 2026 SilentHalos. Emergency incident page. All evidence is end-to-end secured.</span>
+    </div>
   </footer>
 
+  <!-- ── Photo lightbox modal ───────────────────────────────────────── -->
   <div id="galleryModal" class="gallery-modal" aria-hidden="true">
     <div id="galleryModalContent" class="gallery-modal-content">
       <button id="galleryClose" class="gallery-control gallery-close" type="button" aria-label="Close">×</button>
       <button id="galleryReset" class="gallery-reset" type="button">Reset zoom</button>
       <button id="galleryPrev" class="gallery-control gallery-prev" type="button" aria-label="Previous image">‹</button>
       <button id="galleryNext" class="gallery-control gallery-next" type="button" aria-label="Next image">›</button>
-      <div class="gallery-zoom-hint">Double-click, wheel or pinch to zoom</div>
+      <div class="gallery-zoom-hint">Double-tap, pinch or scroll to zoom</div>
       <img id="galleryModalImage" class="gallery-modal-image" alt="Emergency camera evidence" />
       <div id="galleryCounter" class="gallery-counter"></div>
     </div>
   </div>
+
+
 </body>
 </html>
