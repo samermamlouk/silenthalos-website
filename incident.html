@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
   <title>SilentHalos – Emergency Incident</title>
   <link rel="stylesheet" href="style.css" />
   <script type="module" src="incident.js"></script>
@@ -1202,6 +1203,40 @@
         grid-column: 1 / -1;
       }
     }
+
+
+    /* ── Incident language selector ───────────────────────────────── */
+    .incident-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto;
+    }
+    .incident-language-select {
+      min-height: 40px;
+      max-width: 160px;
+      padding: 0 34px 0 12px;
+      border: 1px solid rgba(56, 189, 248, 0.28);
+      border-radius: 999px;
+      background: #07182b;
+      color: #f3f7fb;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .incident-language-select:focus-visible {
+      outline: 2px solid rgba(56, 189, 248, 0.7);
+      outline-offset: 2px;
+    }
+    html[dir="rtl"] .site-brand { direction: ltr; }
+    html[dir="rtl"] .incident-map,
+    html[dir="rtl"] .premium-waveform-seek,
+    html[dir="rtl"] .premium-audio-controls { direction: ltr; }
+    @media (max-width: 620px) {
+      .incident-header-actions { gap: 6px; }
+      .incident-language-select { max-width: 112px; min-height: 36px; font-size: 12px; }
+    }
   </style>
 </head>
 
@@ -1213,7 +1248,22 @@
       <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos" class="brand-logo" />
       <span>SilentHalos</span>
     </div>
-    <a href="index.html" class="about-link">About SilentHalos</a>
+    <div class="incident-header-actions">
+      <select id="incidentLanguageSelector" class="incident-language-select" aria-label="Language" data-i18n-aria-label="language">
+        <option value="en">English</option>
+        <option value="ar">العربية</option>
+        <option value="nl">Nederlands</option>
+        <option value="de">Deutsch</option>
+        <option value="fr">Français</option>
+        <option value="es">Español</option>
+        <option value="it">Italiano</option>
+        <option value="tr">Türkçe</option>
+        <option value="ru">Русский</option>
+        <option value="zh">中文</option>
+        <option value="ur">اردو</option>
+      </select>
+      <a href="index.html" class="about-link" data-i18n="about">About SilentHalos</a>
+    </div>
   </header>
 
   <!-- ── Main content ───────────────────────────────────────────────── -->
@@ -1221,36 +1271,36 @@
 
     <!-- Hero / alert banner -->
     <section class="incident-hero">
-      <p class="eyebrow">🔴 &nbsp;Emergency incident link</p>
-      <h1>SilentHalos Emergency Alert</h1>
-      <p>This emergency page displays evidence securely synchronized by the SilentHalos safety app. It updates automatically.</p>
+      <p class="eyebrow">🔴 &nbsp;<span data-i18n="emergencyIncidentLink">Emergency incident link</span></p>
+      <h1 data-i18n="emergencyAlertTitle">SilentHalos Emergency Alert</h1>
+      <p data-i18n="heroDescription">This emergency page displays evidence securely synchronized by the SilentHalos safety app. It updates automatically.</p>
 
       <!-- Severity -->
       <div class="severity-panel" aria-live="polite">
         <span id="severityBadge" class="severity-badge high">
           <span class="severity-pulse"></span>
-          <span id="severityLabel">HIGH</span>
+          <span id="severityLabel" data-i18n="high">HIGH</span>
         </span>
         <div>
-          <small>Severity level</small>
-          <strong id="severityDescription">Urgent incident requiring prompt review.</strong>
+          <small data-i18n="severityLevel">Severity level</small>
+          <strong id="severityDescription" data-i18n="highDesc">Urgent incident requiring prompt review.</strong>
         </div>
       </div>
 
       <!-- ID + status row -->
       <div class="incident-summary">
         <div class="incident-id-card">
-          <small>Incident ID</small>
-          <strong id="incidentId">Loading...</strong>
+          <small data-i18n="incidentId">Incident ID</small>
+          <strong id="incidentId" data-i18n="loading">Loading...</strong>
         </div>
         <div class="incident-meta-grid">
           <div class="incident-meta-card">
-            <small>Status</small>
-            <strong id="incidentStatus">Loading incident...</strong>
+            <small data-i18n="status">Status</small>
+            <strong id="incidentStatus" data-i18n="loadingIncident">Loading incident...</strong>
           </div>
           <div class="incident-meta-card">
-            <small>Created</small>
-            <strong id="incidentTime">Loading...</strong>
+            <small data-i18n="created">Created</small>
+            <strong id="incidentTime" data-i18n="loading">Loading...</strong>
           </div>
         </div>
       </div>
@@ -1262,25 +1312,25 @@
       <!-- Urgent alert card -->
       <article class="incident-card urgent">
         <div class="incident-icon">🚨</div>
-        <h2>I need help</h2>
-        <p>This incident was generated by the SilentHalos safety app. The person needs immediate attention.</p>
+        <h2 data-i18n="needHelp">I need help</h2>
+        <p data-i18n="needHelpDesc">This incident was generated by the SilentHalos safety app. The person needs immediate attention.</p>
       </article>
 
       <!-- Live location card -->
       <article class="incident-card location-card">
         <div class="incident-icon">📍</div>
-        <h3>Live Location</h3>
-        <p id="locationText">Loading emergency location...</p>
-        <a id="locationButton" class="action-button disabled" aria-disabled="true">Open Map</a>
+        <h3 data-i18n="liveLocation">Live Location</h3>
+        <p id="locationText" data-i18n="loadingLocation">Loading emergency location...</p>
+        <a id="locationButton" class="action-button disabled" aria-disabled="true" data-i18n="openMap">Open Map</a>
 
         <div class="map-live-meta" aria-live="polite">
           <span id="mapLiveBadge" class="map-live-badge live">
             <span class="map-live-dot"></span>
-            <span id="mapLiveLabel">LIVE TRACKING</span>
+            <span id="mapLiveLabel" data-i18n="liveTracking">LIVE TRACKING</span>
           </span>
-          <span id="mapAccuracy">GPS accuracy unavailable</span>
-          <span id="mapSpeed">Speed unavailable</span>
-          <span id="mapLastUpdate">Waiting for update</span>
+          <span id="mapAccuracy" data-i18n="gpsAccuracyUnavailable">GPS accuracy unavailable</span>
+          <span id="mapSpeed" data-i18n="speedUnavailable">Speed unavailable</span>
+          <span id="mapLastUpdate" data-i18n="waitingUpdate">Waiting for update</span>
         </div>
 
         <div
@@ -1289,39 +1339,39 @@
           role="region"
           aria-label="Interactive emergency location map"
         >
-          Loading interactive map...
+          <span data-i18n="loadingMap">Loading interactive map...</span>
         </div>
       </article>
 
       <!-- Live audio card -->
       <article class="incident-card audio-updates-card">
         <div class="incident-icon">🎤</div>
-        <h3>Live Audio Updates</h3>
-        <p id="audioUpdatesSummary">Waiting for the first secure emergency recording...</p>
+        <h3 data-i18n="liveAudioUpdates">Live Audio Updates</h3>
+        <p id="audioUpdatesSummary" data-i18n="waitingFirstRecording">Waiting for the first secure emergency recording...</p>
         <div id="audioUpdatesList" class="audio-updates-list" aria-live="polite"></div>
       </article>
 
       <!-- Camera evidence card -->
-      <article class="incident-card">
+      <article id="cameraEvidenceCard" class="incident-card">
         <div class="incident-icon">📷</div>
-        <h3>Camera Evidence</h3>
-        <p>Camera evidence is not available yet.</p>
+        <h3 data-i18n="cameraEvidence">Camera Evidence</h3>
+        <p data-i18n="cameraUnavailable">Camera evidence is not available yet.</p>
         <div id="cameraGallery" class="camera-gallery" aria-live="polite"></div>
       </article>
 
       <!-- Drive mode card -->
       <article class="incident-card">
         <div class="incident-icon">🎥</div>
-        <h3>Drive Mode Video</h3>
-        <p>Video evidence will be available when Drive Mode dashcam is connected.</p>
-        <button class="action-button disabled" type="button">Coming Soon</button>
+        <h3 data-i18n="driveModeVideo">Drive Mode Video</h3>
+        <p data-i18n="driveModeDesc">Video evidence will be available when Drive Mode dashcam is connected.</p>
+        <button class="action-button disabled" type="button" data-i18n="comingSoon">Coming Soon</button>
       </article>
 
       <!-- Device telemetry card -->
       <article class="incident-card telemetry-card">
         <div class="incident-icon">🔋</div>
-        <h3>Device Telemetry</h3>
-        <p id="deviceStatus">Loading device status...</p>
+        <h3 data-i18n="deviceTelemetry">Device Telemetry</h3>
+        <p id="deviceStatus" data-i18n="loadingDevice">Loading device status...</p>
 
         <div class="battery-level">
           <span id="batteryLevelFill" class="battery-level-fill"></span>
@@ -1329,28 +1379,28 @@
 
         <div class="telemetry-grid">
           <div>
-            <small>Battery</small>
-            <strong id="telemetryBattery">Loading...</strong>
+            <small data-i18n="battery">Battery</small>
+            <strong id="telemetryBattery" data-i18n="loading">Loading...</strong>
           </div>
           <div>
-            <small>Speed</small>
-            <strong id="telemetrySpeed">Loading...</strong>
+            <small data-i18n="speed">Speed</small>
+            <strong id="telemetrySpeed" data-i18n="loading">Loading...</strong>
           </div>
           <div>
-            <small>GPS</small>
-            <strong id="telemetryGps">Loading...</strong>
+            <small data-i18n="gps">GPS</small>
+            <strong id="telemetryGps" data-i18n="loading">Loading...</strong>
           </div>
           <div>
-            <small>Accuracy</small>
-            <strong id="telemetryAccuracy">Loading...</strong>
+            <small data-i18n="accuracy">Accuracy</small>
+            <strong id="telemetryAccuracy" data-i18n="loading">Loading...</strong>
           </div>
           <div>
-            <small>Direction</small>
-            <strong id="telemetryHeading">Loading...</strong>
+            <small data-i18n="direction">Direction</small>
+            <strong id="telemetryHeading" data-i18n="loading">Loading...</strong>
           </div>
           <div>
-            <small>Network</small>
-            <strong id="telemetryNetwork">Loading...</strong>
+            <small data-i18n="network">Network</small>
+            <strong id="telemetryNetwork" data-i18n="loading">Loading...</strong>
           </div>
         </div>
       </article>
@@ -1361,12 +1411,12 @@
     <section class="incident-timeline premium-timeline-panel">
       <div class="timeline-heading-row">
         <div>
-          <p class="timeline-eyebrow">INCIDENT ACTIVITY</p>
-          <h2>Incident Timeline</h2>
+          <p class="timeline-eyebrow" data-i18n="incidentActivity">INCIDENT ACTIVITY</p>
+          <h2 data-i18n="incidentTimeline">Incident Timeline</h2>
         </div>
         <span class="timeline-live-status">
           <span class="timeline-live-dot"></span>
-          Updating automatically
+          <span data-i18n="updatingAutomatically">Updating automatically</span>
         </span>
       </div>
 
@@ -1374,8 +1424,8 @@
         <article class="premium-timeline-item live">
           <span class="premium-timeline-marker"></span>
           <div class="premium-timeline-content">
-            <strong>Loading incident activity</strong>
-            <span>Waiting for synchronized evidence.</span>
+            <strong data-i18n="loadingActivity">Loading incident activity</strong>
+            <span data-i18n="waitingEvidence">Waiting for synchronized evidence.</span>
           </div>
           <time>—</time>
         </article>
@@ -1388,19 +1438,24 @@
   <footer>
     <div class="footer-inner">
       <span class="footer-brand">SilentHalos</span>
-      <span>© 2026 SilentHalos. Emergency incident page. All evidence is end-to-end secured.</span>
+      <span data-i18n="footer">© 2026 SilentHalos. Emergency incident page. All evidence is end-to-end secured.</span>
+      <span>
+        <a href="/privacy" rel="noopener" data-i18n="privacy">Privacy Policy</a>
+        &nbsp;·&nbsp;
+        <a href="/terms" rel="noopener" data-i18n="terms">Terms &amp; Conditions</a>
+      </span>
     </div>
   </footer>
 
   <!-- ── Photo lightbox modal ───────────────────────────────────────── -->
   <div id="galleryModal" class="gallery-modal" aria-hidden="true">
     <div id="galleryModalContent" class="gallery-modal-content">
-      <button id="galleryClose" class="gallery-control gallery-close" type="button" aria-label="Close">×</button>
-      <button id="galleryReset" class="gallery-reset" type="button">Reset zoom</button>
-      <button id="galleryPrev" class="gallery-control gallery-prev" type="button" aria-label="Previous image">‹</button>
-      <button id="galleryNext" class="gallery-control gallery-next" type="button" aria-label="Next image">›</button>
-      <div class="gallery-zoom-hint">Double-tap, pinch or scroll to zoom</div>
-      <img id="galleryModalImage" class="gallery-modal-image" alt="Emergency camera evidence" />
+      <button id="galleryClose" class="gallery-control gallery-close" type="button" aria-label="Close" data-i18n-aria-label="close">×</button>
+      <button id="galleryReset" class="gallery-reset" type="button" data-i18n="resetZoom">Reset zoom</button>
+      <button id="galleryPrev" class="gallery-control gallery-prev" type="button" aria-label="Previous image" data-i18n-aria-label="previousImage">‹</button>
+      <button id="galleryNext" class="gallery-control gallery-next" type="button" aria-label="Next image" data-i18n-aria-label="nextImage">›</button>
+      <div class="gallery-zoom-hint" data-i18n="zoomHint">Double-tap, pinch or scroll to zoom</div>
+      <img id="galleryModalImage" class="gallery-modal-image" alt="Emergency camera evidence" data-i18n-alt="emergencyCameraAlt" />
       <div id="galleryCounter" class="gallery-counter"></div>
     </div>
   </div>
