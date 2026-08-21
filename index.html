@@ -3,148 +3,321 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SilentHalos – Personal Safety App</title>
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    .landing-shell {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 40px 20px;
-      text-align: center;
-    }
+  <meta name="description" content="SilentHalos is a personal safety and emergency-assistance app designed to help users alert trusted contacts, share location and preserve incident evidence when help may be needed." />
+  <meta name="theme-color" content="#07152A" />
 
-    .landing-logo {
-      width: 96px;
-      height: 96px;
-      border-radius: 28px;
-      margin-bottom: 28px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-    }
+  <link rel="icon" type="image/png" href="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" />
+  <link rel="apple-touch-icon" href="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" />
 
-    .landing-title {
-      font-size: clamp(36px, 8vw, 64px);
-      font-weight: 900;
-      letter-spacing: -0.03em;
-      color: #f1f7ff;
-      margin: 0 0 16px;
-    }
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="SilentHalos – When Seconds Matter" />
+  <meta property="og:description" content="Personal safety and emergency assistance designed to help you alert trusted contacts, share your location and preserve incident evidence when help may be needed." />
+  <meta property="og:url" content="https://silenthalos.com/" />
+  <meta property="og:image" content="https://silenthalos.com/ChatGPT%20Image%20Jun%206,%202026,%2003_10_08%20PM.png" />
+  <meta property="og:site_name" content="SilentHalos" />
 
-    .landing-subtitle {
-      font-size: clamp(16px, 3vw, 20px);
-      color: rgba(218, 233, 245, 0.72);
-      max-width: 520px;
-      line-height: 1.6;
-      margin: 0 auto 40px;
-    }
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="SilentHalos – When Seconds Matter" />
+  <meta name="twitter:description" content="Personal safety and emergency assistance designed to help you alert trusted contacts, share your location and preserve incident evidence when help may be needed." />
+  <meta name="twitter:image" content="https://silenthalos.com/ChatGPT%20Image%20Jun%206,%202026,%2003_10_08%20PM.png" />
 
-    .landing-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 18px;
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      border-radius: 999px;
-      background: rgba(56, 189, 248, 0.08);
-      color: #38BDF8;
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.06em;
-      margin-bottom: 48px;
-    }
-
-    .landing-features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      max-width: 800px;
-      width: 100%;
-      margin: 0 auto 48px;
-    }
-
-    .landing-feature {
-      padding: 24px 20px;
-      border: 1px solid rgba(30, 45, 66, 0.9);
-      border-radius: 20px;
-      background: rgba(11, 22, 40, 0.7);
-      text-align: left;
-    }
-
-    .landing-feature-icon {
-      font-size: 28px;
-      margin-bottom: 12px;
-    }
-
-    .landing-feature h3 {
-      color: #f1f7ff;
-      font-size: 16px;
-      font-weight: 700;
-      margin: 0 0 6px;
-    }
-
-    .landing-feature p {
-      color: rgba(218, 233, 245, 0.65);
-      font-size: 13px;
-      line-height: 1.55;
-      margin: 0;
-    }
-
-    .landing-footer-note {
-      color: rgba(218, 233, 245, 0.45);
-      font-size: 13px;
-    }
-  </style>
+  <title>SilentHalos – When Seconds Matter</title>
+  <link rel="stylesheet" href="home.css?v=20260821-about" />
 </head>
-<body class="incident-body">
-
-  <header class="site-header">
-    <div class="site-brand">
-      <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos" class="brand-logo" />
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="SilentHalos home">
+      <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos logo" />
       <span>SilentHalos</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Primary navigation">
+      <a href="#how" data-i18n="how">How it works</a>
+      <a href="#features" data-i18n="features">Features</a>
+      <a href="#safety" data-i18n="safety">Safety</a>
+      <a href="#about" data-i18n="about">About</a>
+      <a href="#faq" data-i18n="faq">FAQ</a>
+    </nav>
+
+
+    <div class="language-picker">
+      <select id="languageSelect" aria-label="Language">
+        <option value="en">EN · English</option>
+        <option value="nl">NL · Nederlands</option>
+        <option value="de">DE · Deutsch</option>
+        <option value="fr">FR · Français</option>
+        <option value="es">ES · Español</option>
+        <option value="it">IT · Italiano</option>
+        <option value="ru">RU · Русский</option>
+        <option value="tr">TR · Türkçe</option>
+        <option value="zh">ZH · 中文</option>
+        <option value="ur">UR · اردو</option>
+        <option value="ar">AR · العربية</option>
+      </select>
     </div>
+    <a class="nav-cta" href="mailto:support@silenthalos.com" data-i18n="contact" data-i18n="contact">Contact</a>
   </header>
 
-  <main class="landing-shell">
-
-    <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos" class="landing-logo" />
-
-    <div class="landing-badge">
-      🛡️ &nbsp;Personal Safety Platform
-    </div>
-
-    <h1 class="landing-title">SilentHalos</h1>
-    <p class="landing-subtitle">
-      The emergency safety app that silently protects you. One press triggers an emergency alert — sharing your live location, recording audio evidence, and capturing photos automatically.
-    </p>
-
-    <div class="landing-features">
-      <div class="landing-feature">
-        <div class="landing-feature-icon">📍</div>
-        <h3>Live Location Sharing</h3>
-        <p>Your real-time GPS location is shared with trusted contacts the moment an emergency is triggered.</p>
+  <main id="top">
+    <section class="hero section-shell">
+      <div class="hero-copy">
+        <div class="status-pill"><span></span> Launching soon</div>
+        <p class="eyebrow" data-i18n="heroLabel">Personal safety & emergency assistance</p>
+        <h1 data-i18n="heroTitle">When seconds matter, SilentHalos helps you act fast.</h1>
+        <p class="hero-text" data-i18n="heroText">SilentHalos is designed to help you discreetly alert trusted contacts, share your location and preserve incident evidence when you may need help.</p>
+        <div class="hero-actions">
+          <a class="primary-btn" href="#how" data-i18n="seeHow">See how it works</a>
+          <a class="secondary-btn" href="mailto:support@silenthalos.com" data-i18n="support">Contact support</a>
+        </div>
+        <p class="microcopy" data-i18n="micro">Designed for everyday personal-safety situations — not only driving incidents.</p>
       </div>
-      <div class="landing-feature">
-        <div class="landing-feature-icon">🎤</div>
-        <h3>Audio Evidence</h3>
-        <p>Continuous audio recordings are securely uploaded to the cloud during an active emergency.</p>
-      </div>
-      <div class="landing-feature">
-        <div class="landing-feature-icon">📷</div>
-        <h3>Camera Evidence</h3>
-        <p>Front and rear camera photos are captured and stored as secure evidence automatically.</p>
-      </div>
-      <div class="landing-feature">
-        <div class="landing-feature-icon">🔔</div>
-        <h3>Silent Alerts</h3>
-        <p>Trigger an emergency discreetly — without unlocking your phone or drawing attention.</p>
-      </div>
-    </div>
 
-    <p class="landing-footer-note">© 2026 SilentHalos. All evidence is end-to-end secured.</p>
+      <div class="hero-visual" aria-label="SilentHalos app concept preview">
+        <div class="phone-frame">
+          <div class="phone-screen">
+            <div class="app-header-mini">
+              <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="" />
+              <div>
+                <strong>SilentHalos</strong>
+                <small data-i18n="protectionActiveMini">Protection active</small>
+              </div>
+              <span class="active-pill" data-i18n="active">ACTIVE</span>
+            </div>
+            <div class="shield-orbit active-orbit">
+              <div class="shield-core active-core">
+                <span class="power-icon" aria-hidden="true"></span>
+                <strong data-i18n="stop">STOP</strong>
+              </div>
+            </div>
+            <h2 class="active-title" data-i18n="protectionActive">SilentHalos Protection is Active</h2>
+            <p data-i18n="background">Background protection is running and ready when you need help.</p>
+            <div class="mini-grid">
+              <div><span>📍</span><strong data-i18n="location">Location</strong></div>
+              <div><span>🎙️</span><strong data-i18n="audio">Audio</strong></div>
+              <div><span>📷</span><strong data-i18n="evidence">Evidence</strong></div>
+              <div><span>🔔</span><strong data-i18n="alerts">Alerts</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
+    <section class="trust-strip">
+      <div data-i18n="discreet">Discreet alerts</div>
+      <div data-i18n="trusted">Trusted contacts</div>
+      <div data-i18n="live">Live location</div>
+      <div data-i18n="incidentEvidence">Incident evidence</div>
+    </section>
+
+    <section id="how" class="content-section section-shell">
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="how">How it works</p>
+        <h2 data-i18n="howTitle">Four simple steps when every second matters.</h2>
+        <p data-i18n="howText">Prepare once, then let SilentHalos help you alert trusted contacts and preserve critical incident information when you need it.</p>
+      </div>
+
+      <div class="steps-grid">
+        <article class="step-card">
+          <span class="step-number">01</span>
+          <h3 data-i18n="s1t">Prepare before you need it</h3>
+          <p data-i18n="s1d">Set up your trusted contacts, permissions and safety preferences in advance.</p>
+        </article>
+        <article class="step-card">
+          <span class="step-number">02</span>
+          <h3 data-i18n="s2t">Trigger an emergency alert</h3>
+          <p data-i18n="s2d">Use your configured emergency trigger, including Shake Detection when enabled, when you believe help may be needed.</p>
+        </article>
+        <article class="step-card">
+          <span class="step-number">03</span>
+          <h3 data-i18n="s3t">Share critical information</h3>
+          <p data-i18n="s3d">SilentHalos can share incident information such as your location and alert details with trusted contacts.</p>
+        </article>
+        <article class="step-card">
+          <span class="step-number">04</span>
+          <h3 data-i18n="s4t">Preserve incident evidence</h3>
+          <p data-i18n="s4d">Depending on device permissions and feature availability, incident evidence such as audio and camera data may be captured and stored.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="features" class="content-section section-shell">
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="core">Core features</p>
+        <h2 data-i18n="coreTitle">The essentials, ready when you need them.</h2>
+      </div>
+
+      <div class="features-grid">
+        <article class="feature-card">
+          <div class="feature-icon blue">📍</div>
+          <h3 data-i18n="f1t">Live Location Sharing</h3>
+          <p data-i18n="f1d">Help trusted contacts understand where you are during an active incident.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon violet">🎙️</div>
+          <h3 data-i18n="f2t">Audio Evidence</h3>
+          <p data-i18n="f2d">Recordings can help preserve context around an incident when the feature is active.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon cyan">📷</div>
+          <h3 data-i18n="f3t">Camera Evidence</h3>
+          <p data-i18n="f3d">Camera evidence may be captured according to your device capabilities, permissions and app settings.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon green">🔔</div>
+          <h3 data-i18n="f4t">Discreet Alerts</h3>
+          <p data-i18n="f4d">Designed to help you trigger help quickly without navigating through multiple screens.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon cyan">📳</div>
+          <h3 data-i18n="fShakeTitle">Shake Emergency Trigger</h3>
+          <p data-i18n="fShakeDesc">When enabled, a configured shake gesture can quickly trigger your emergency flow when reaching the screen may be difficult — whether you’re walking, feeling unwell, facing a threat, travelling or on the road.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon amber">🔋</div>
+          <h3 data-i18n="f5t">Incident Telemetry</h3>
+          <p data-i18n="f5d">Relevant device information can be attached to an incident to provide additional context.</p>
+        </article>
+        <article class="feature-card">
+          <div class="feature-icon red">🔗</div>
+          <h3 data-i18n="f6t">Public Incident Link</h3>
+          <p data-i18n="f6d">A shareable incident page can present available emergency information and live updates to intended recipients.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="use-cases-section">
+      <div class="section-shell two-column">
+        <div>
+          <p class="eyebrow" data-i18n="realLife">Made for real life</p>
+          <h2 data-i18n="realTitle">Safety is bigger than one scenario.</h2>
+          <p class="body-copy" data-i18n="realText">SilentHalos is being designed for a wide range of personal-safety situations — while walking, travelling, meeting someone, at home, at work, on the road or anywhere you may want a faster way to alert people you trust.</p>
+        </div>
+        <div class="use-case-grid">
+          <span data-i18n="u1">Walking alone</span>
+          <span data-i18n="u2">Travel</span>
+          <span data-i18n="u3">Personal threats</span>
+          <span data-i18n="u4">Medical concern</span>
+          <span data-i18n="u5">Road incidents</span>
+          <span data-i18n="u6">Unexpected emergencies</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="safety" class="content-section section-shell">
+      <div class="safety-card">
+        <div class="safety-icon">!</div>
+        <div>
+          <p class="eyebrow danger" data-i18n="safetyLabel">Important safety information</p>
+          <h2 data-i18n="safetyTitle">SilentHalos supports personal safety. It does not replace emergency services.</h2>
+          <p data-i18n="safetyText">SilentHalos is not a police, ambulance, fire, rescue or emergency-dispatch service. In an emergency, contact the appropriate official emergency service whenever you are able to do so. App functionality may be affected by network availability, device settings, permissions, battery level, GPS, internet connectivity and operating-system restrictions.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="content-section section-shell about-section">
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="about">About</p>
+        <h2 data-i18n="aboutTitle">Built to help when reaching for help is difficult.</h2>
+        <p data-i18n="aboutText">SilentHalos is a personal-safety and emergency-assistance platform designed to make it faster and more discreet to alert people you trust, share critical incident information and preserve available evidence when something goes wrong.</p>
+      </div>
+      <div class="about-grid">
+        <article class="about-card">
+          <span class="about-card-icon">◎</span>
+          <h3 data-i18n="aboutMissionTitle">Our mission</h3>
+          <p data-i18n="aboutMissionText">Reduce the time and effort needed to reach trusted people during stressful, unexpected or dangerous situations.</p>
+        </article>
+        <article class="about-card">
+          <span class="about-card-icon">◇</span>
+          <h3 data-i18n="aboutApproachTitle">Designed around real situations</h3>
+          <p data-i18n="aboutApproachText">SilentHalos is being built for personal safety across everyday life — at home, at work, while travelling, walking, driving or facing an unexpected emergency.</p>
+        </article>
+        <article class="about-card">
+          <span class="about-card-icon">✓</span>
+          <h3 data-i18n="aboutPrincipleTitle">Safety with responsibility</h3>
+          <p data-i18n="aboutPrincipleText">The platform is designed to support personal safety while being clear about permissions, privacy and the fact that it does not replace official emergency services.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="content-section section-shell privacy-highlight">
+      <div class="privacy-copy">
+        <p class="eyebrow" data-i18n="privacyLabel">Privacy & responsibility</p>
+        <h2 data-i18n="privacyTitle">Your safety data deserves careful handling.</h2>
+        <p data-i18n="privacyText">SilentHalos handles sensitive personal and incident-related information. Our privacy policy explains what data may be processed, why it may be needed and the responsibilities connected to using the service.</p>
+        <div class="inline-links">
+          <a href="privacy.html" data-i18n="privacyLink">Read Privacy Policy</a>
+          <a href="terms.html" data-i18n="termsLink">Read Terms & Conditions</a>
+        </div>
+      </div>
+      <div class="privacy-badge">
+        <span data-i18n="operated">Operated by</span>
+        <strong>Fenikia International</strong>
+        <small data-i18n="netherlands">Netherlands</small>
+      </div>
+    </section>
+
+    <section id="faq" class="content-section section-shell">
+      <div class="section-heading">
+        <p class="eyebrow" data-i18n="faq">FAQ</p>
+        <h2 data-i18n="faqTitle">What you should know before launch.</h2>
+      </div>
+
+      <div class="faq-grid">
+        <details>
+          <summary data-i18n="q1">Is SilentHalos an emergency service?</summary>
+          <p data-i18n="a1">No. SilentHalos is a personal-safety and emergency-assistance tool and does not replace official emergency services.</p>
+        </details>
+        <details>
+          <summary data-i18n="q2">Who receives an alert?</summary>
+          <p data-i18n="a2">Alerts are intended for the trusted contacts you configure in the app, according to the features and permissions you enable.</p>
+        </details>
+        <details>
+          <summary data-i18n="q3">Does SilentHalos work only for driving incidents?</summary>
+          <p data-i18n="a3">No. SilentHalos is designed for many personal-safety scenarios and should not assume the user is driving unless the incident data indicates that.</p>
+        </details>
+        <details>
+          <summary data-i18n="q4">When will the app be available?</summary>
+          <p data-i18n="a4">SilentHalos is in final preparation for launch. Availability information will be published here when the release is ready.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="launch-section">
+      <div class="section-shell launch-card">
+        <div>
+          <p class="eyebrow" data-i18n="launching">Launching soon</p>
+          <h2 data-i18n="launchTitle">SilentHalos is almost ready.</h2>
+          <p data-i18n="launchText">We are completing final safety, privacy and release checks before public availability.</p>
+        </div>
+        <a class="primary-btn" href="mailto:support@silenthalos.com?subject=SilentHalos%20launch%20updates" data-i18n="contactUs">Contact us</a>
+      </div>
+    </section>
   </main>
 
+  <footer class="footer">
+    <div class="footer-main section-shell">
+      <div class="footer-brand-block">
+        <a class="brand footer-logo" href="#top">
+          <img src="ChatGPT Image Jun 6, 2026, 03_10_08 PM.png" alt="SilentHalos logo" />
+          <span>SilentHalos</span>
+        </a>
+        <p data-i18n="tagline">When Seconds Matter</p>
+      </div>
+
+      <div class="footer-links">
+        <a href="#about" data-i18n="about">About</a>
+        <a href="privacy.html" data-i18n="privacyPolicy">Privacy Policy</a>
+        <a href="terms.html" data-i18n="terms">Terms & Conditions</a>
+        <a href="mailto:support@silenthalos.com">support@silenthalos.com</a>
+        <a href="#top" data-i18n="back">Back to top</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom section-shell">
+      <p data-i18n="copy">© 2026 SilentHalos. All rights reserved.</p>
+      <p data-i18n="operator">Operated by Fenikia International, Netherlands.</p>
+    </div>
+  </footer>
+  <script src="translations.js?v=20260821-about"></script>
 </body>
 </html>
