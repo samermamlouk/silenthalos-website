@@ -215,6 +215,33 @@ function firstUsefulValue(...values) {
   return values.find((value) => value !== undefined && value !== null && value !== "");
 }
 
+function getIncidentMembershipPlan(data) {
+  const plan = String(data?.membershipPlan || "").trim().toLowerCase();
+  return ["premium", "family"].includes(plan) ? plan : "free";
+}
+
+function setPremiumEvidenceVisibility(isPremium) {
+  const audioCard = document.querySelector(".audio-updates-card");
+  const cameraCard = document.getElementById("cameraEvidenceCard");
+
+  if (audioCard) audioCard.hidden = !isPremium;
+  if (cameraCard && !isPremium) cameraCard.hidden = true;
+}
+
+function renderSosMessage(data) {
+  setText(
+    "sosMessageText",
+    firstUsefulValue(
+      data.sosMessage,
+      data.message,
+      data.emergencyMessage,
+      data.sms?.message,
+      data.sms?.body,
+      t("needHelpDesc")
+    )
+  );
+}
+
 function formatTimestamp(value) {
   if (!value) return t("unknown");
 
@@ -1776,7 +1803,11 @@ function hasVisibleCameraEvidence(data) {
 
 function renderIncident(data, incidentId) {
   currentIncidentData = data;
+  const membershipPlan = getIncidentMembershipPlan(data);
+  const canViewEvidence = membershipPlan === "premium" || membershipPlan === "family";
+
   setText("incidentId", data.incidentId || incidentId);
+  renderSosMessage(data);
 
   const rawIncidentStatus = String(firstUsefulValue(data.publicStatus, data.status, "unknown"));
   const readableIncidentStatus = rawIncidentStatus
@@ -1798,9 +1829,22 @@ function renderIncident(data, incidentId) {
 
   renderSeverity(data);
   renderLocation(data);
-  renderAudio(data);
   renderDeviceStatus(data);
   renderTimeline(data);
+
+  if (!canViewEvidence) {
+    setPremiumEvidenceVisibility(false);
+    cameraRenderGeneration += 1;
+    galleryImages = [];
+    document.getElementById("cameraGallery")?.replaceChildren();
+    if (document.getElementById("galleryModal")?.classList.contains("open")) {
+      closeGallery();
+    }
+    return;
+  }
+
+  setPremiumEvidenceVisibility(true);
+  renderAudio(data);
 
   const cameraCard = document.getElementById("cameraEvidenceCard");
   const showCameraEvidence = hasVisibleCameraEvidence(data);
